@@ -612,6 +612,11 @@
     isDraggingGradient = true;
     if (gradientCanvas) gradientRect = gradientCanvas.getBoundingClientRect();
     activeGradientStop = index;
+
+    // Get the color of the selected stop and update the color pickers
+    const selectedColor = gradientStops[index].color;
+    hexValue = selectedColor;
+    updateFromHex(); // This will update HSV, RGB, and refresh all the UI elements
   }
 
   function handleGradientMouseup() {
