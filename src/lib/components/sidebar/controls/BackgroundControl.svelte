@@ -11,6 +11,7 @@
     GradientColorPicker,
   } from "$lib/components/ui/color-picker/index.js";
   import { onMount } from "svelte";
+  import { Input } from "$lib/components/ui/input/index.js";
 
   interface BackgroundControlProps {
     type: BackgroundType;
@@ -22,13 +23,14 @@
 
   let isFirstRender = true;
 
-  // Track local values for color pickers
+  // Local state for each background variant
   let solidColorValue = $state(type === "solid" ? value : "#000000");
   let gradientColorValue = $state(
     type === "gradient"
       ? value
       : "linear-gradient(-45deg, #4954de 0%, #49ddd8 100%)"
   );
+  let imageValue = $state(type === "image" ? value : "");
 
   let activeTab = $state<"gradient" | "color" | "image">("gradient");
 
@@ -40,6 +42,27 @@
     gradientColorValue = color;
   };
 
+  const handleImageChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      const file = target.files[0];
+      if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+        // Optionally notify the user of an invalid file type
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        imageValue = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    imageValue = "";
+    activeTab = "gradient";
+  };
+
   $effect(() => {
     if (isFirstRender) {
       if (type === "gradient") {
@@ -48,6 +71,9 @@
       } else if (type === "solid") {
         activeTab = "color";
         solidColorValue = value;
+      } else if (type === "image") {
+        activeTab = "image";
+        imageValue = value;
       }
     }
   });
@@ -59,6 +85,9 @@
     } else if (activeTab === "color") {
       type = "solid";
       value = solidColorValue;
+    } else if (activeTab === "image") {
+      type = "image";
+      value = imageValue;
     }
   });
 
@@ -99,9 +128,17 @@
 
 <Popover.Root>
   <Popover.Trigger class="w-full">
-    <!-- If the type is solid or gradient, show a box with the color -->
-    {#if type === "solid" || type === "gradient"}
+    {#if (type === "solid" || type === "gradient") && value}
       <div class="h-5 w-full rounded-md" style="background: {value};"></div>
+    {/if}
+    {#if type === "image" && imageValue}
+      <div class="h-5 w-full overflow-hidden rounded-md">
+        <img
+          src={imageValue}
+          alt="Background image"
+          class="h-full w-full object-cover"
+        />
+      </div>
     {/if}
   </Popover.Trigger>
   <Popover.Content
@@ -109,7 +146,6 @@
     sideOffset={12}
     class="max-h-screen overflow-y-auto"
   >
-    <!-- Title -->
     <div class="mb-4 flex items-center justify-between">
       <h3 class="text-sm font-semibold">Background</h3>
       <Popover.Close>
@@ -142,8 +178,7 @@
           ></button>
         {/each}
       </div>
-    {/if}
-    {#if activeTab === "color"}
+    {:else if activeTab === "color"}
       <ColorPicker
         {value}
         initialColor={solidColorValue}
@@ -160,6 +195,30 @@
             style="background: {preset};"
           ></button>
         {/each}
+      </div>
+    {:else if activeTab === "image"}
+      <div class="flex flex-col gap-2">
+        <Input
+          type="file"
+          accept="image/png, image/jpeg, image/jpg"
+          onchange={handleImageChange}
+          class="max-w-xs"
+        />
+        {#if imageValue}
+          <!-- svelte-ignore a11y_img_redundant_alt -->
+          <img
+            src={imageValue}
+            alt="Background image preview"
+            class="max-w-xs rounded-md border"
+          />
+          <button
+            type="button"
+            onclick={removeImage}
+            class="text-sm text-red-500"
+          >
+            Remove Image
+          </button>
+        {/if}
       </div>
     {/if}
   </Popover.Content>
