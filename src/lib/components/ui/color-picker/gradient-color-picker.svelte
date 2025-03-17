@@ -9,6 +9,7 @@
     initialColor?: string;
     onchange?: (color: string) => void;
     maxGradientColors?: number;
+    showColorPreviewBox?: boolean;
   }
 
   // Default gradient value if parsing fails
@@ -19,6 +20,7 @@
     initialColor = DEFAULT_VALUE,
     onchange,
     maxGradientColors = 5,
+    showColorPreviewBox = true,
   }: ColorPickerProps = $props();
 
   // Always in gradient mode
@@ -654,14 +656,16 @@
     ></div>
   </div>
   <div class="p-2 sm:p-3">
-    <div class="mb-2 flex flex-wrap gap-2 sm:mb-3">
-      <div class="ml-auto flex items-center">
-        <div
-          class="h-6 w-6 rounded border border-gray-300 dark:border-gray-600"
-          style="background: {color};"
-        ></div>
+    {#if showColorPreviewBox}
+      <div class="mb-2 flex flex-wrap gap-2 sm:mb-3">
+        <div class="ml-auto flex items-center">
+          <div
+            class="h-6 w-6 rounded border border-gray-300 dark:border-gray-600"
+            style="background: {color};"
+          ></div>
+        </div>
       </div>
-    </div>
+    {/if}
     <div class="mb-4">
       <div class="mb-2 flex items-center gap-2">
         <select

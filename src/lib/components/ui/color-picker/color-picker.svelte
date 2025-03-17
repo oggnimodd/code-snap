@@ -5,12 +5,14 @@
     value: string;
     initialColor?: string;
     onchange?: (color: string) => void;
+    showColorPreviewBox?: boolean;
   }
 
   let {
     value = $bindable(),
     initialColor = "#000000",
     onchange,
+    showColorPreviewBox = true,
   }: ColorPickerProps = $props();
 
   let color = $state(initialColor);
@@ -393,12 +395,14 @@
     ></div>
   </div>
   <div class="p-2 sm:p-3">
-    <div class="mb-2 flex justify-end">
-      <div
-        class="h-6 w-6 rounded border border-gray-300 dark:border-gray-600"
-        style="background: {color};"
-      ></div>
-    </div>
+    {#if showColorPreviewBox}
+      <div class="mb-2 flex justify-end">
+        <div
+          class="h-6 w-6 rounded border border-gray-300 dark:border-gray-600"
+          style="background: {color};"
+        ></div>
+      </div>
+    {/if}
     <div class="mb-4">
       <div class="relative mb-2 h-4 w-full">
         <div class="absolute inset-0 overflow-hidden rounded-full">

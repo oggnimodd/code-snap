@@ -98,6 +98,7 @@
         {value}
         initialColor={gradientColorValue}
         onchange={handleGradientColorChange}
+        showColorPreviewBox={false}
       />
     {/if}
 
@@ -106,6 +107,7 @@
         {value}
         initialColor={solidColorValue}
         onchange={handleSolidColorChange}
+        showColorPreviewBox={false}
       />
     {/if}
   </Popover.Content>
