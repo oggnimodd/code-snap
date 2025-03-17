@@ -4,8 +4,14 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [sveltekit()],
-
+  // https://svelte.dev/docs/svelte/testing
+  resolve: process.env.VITEST
+    ? {
+        conditions: ["browser"],
+      }
+    : undefined,
   test: {
+    environment: "jsdom",
     workspace: [
       {
         extends: "./vite.config.ts",

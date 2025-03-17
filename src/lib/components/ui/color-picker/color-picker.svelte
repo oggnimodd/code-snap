@@ -1,7 +1,7 @@
 <script lang="ts">
   import { hexToRgb, rgbToHsv, hsvToRgb, rgbToHex } from "./utils";
 
-  interface ColorPickerProps {
+  export interface ColorPickerProps {
     value: string;
     initialColor?: string;
     onchange?: (color: string) => void;
