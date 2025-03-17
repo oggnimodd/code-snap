@@ -1,5 +1,20 @@
+export type BackgroundType = "solid" | "gradient" | "image";
+export type BackgroundValue = string;
+
+export interface FrameStore {
+  padding: number;
+  radius: number;
+  visible: boolean;
+  opacity: number;
+  background: {
+    type: BackgroundType;
+    value: BackgroundValue;
+  };
+  aspectRatio: "auto" | "16:9" | "4:3" | "1:1";
+}
+
 // This store will control the background frame
-export const frameStore = $state({
+export const frameStore: FrameStore = $state({
   // Padding can be 0,16,32,64,128
   padding: 16,
   // Radius can be 0,8,16,24
@@ -8,11 +23,10 @@ export const frameStore = $state({
   visible: true,
   // Control opacity of the frame, from 0 to 1
   opacity: 1,
-  // Color of the frame
-  // Can be solid color, gradient, or image
-  color: {
+  // Background type, can be solid, gradient, or image
+  background: {
     type: "solid",
-    value: "#000000",
+    value: "#0000FF",
   },
   // Aspect ratio of the frame, can be 16:9, 4:3, etc. Default to auto
   aspectRatio: "auto",

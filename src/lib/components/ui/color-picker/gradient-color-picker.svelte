@@ -1,21 +1,30 @@
 <script lang="ts">
-  // Removed unused gradient imports and code
+  import { Button } from "$lib/components/ui/button/index.js";
+  import IconTrash from "@tabler/icons-svelte/icons/trash";
+
   interface ColorPickerProps {
     value: string;
+    // Changed default to a sensible gradient value
     initialColor?: string;
     onchange?: (color: string) => void;
+    maxGradientColors?: number;
   }
+
+  // Default gradient value if parsing fails
+  const DEFAULT_VALUE = "linear-gradient(90deg, #000000 0%, #ffffff 100%)";
 
   let {
     value = $bindable(),
-    initialColor = "#000000",
+    initialColor = DEFAULT_VALUE,
     onchange,
+    maxGradientColors = 5,
   }: ColorPickerProps = $props();
 
+  // Always in gradient mode
   let color = $state(initialColor);
   let h = $state(0);
   let s = $state(100);
-  let v = $state(100);
+  let vVal = $state(100); // renamed from v to vVal
   let a = $state(255);
   let r = $state(0);
   let g = $state(0);
@@ -25,37 +34,181 @@
   let colorCanvas = $state<HTMLCanvasElement | null>(null);
   let hueCanvas = $state<HTMLCanvasElement | null>(null);
   let alphaCanvas = $state<HTMLCanvasElement | null>(null);
+  let gradientCanvas = $state<HTMLCanvasElement | null>(null);
 
   let isDragging = $state(false);
   let isDraggingHue = $state(false);
   let isDraggingAlpha = $state(false);
+  let isDraggingGradient = $state(false);
 
   let pointer = $state({ x: 0, y: 0 });
   let huePosition = $state(0);
   let alphaPosition = $state(0);
   let colorRect: DOMRect | null = null;
+  let gradientRect: DOMRect | null = null;
   let inited = false;
   let containerEl = $state<HTMLDivElement | null>(null);
 
+  interface GradientStop {
+    pos: number;
+    color: string;
+  }
+  // For a gradient default, use two different colors.
+  let gradientStops: GradientStop[] = $state([
+    { pos: 0, color: "#000000" },
+    { pos: 100, color: "#ffffff" },
+  ]);
+  let activeGradientStop = $state(0);
+  let gradientType = $state<"linear" | "radial">("linear");
+  let gradientAngle = $state(90);
+  let gradientDraggingIndex: number | null = null;
+
+  // Helper: parse a gradient string and update state. Returns true if parsed.
+  function parseGradient(val: string): boolean {
+    const vTrim = val.trim().replace(/;$/, ""); // remove trailing semicolon if any
+    let parsed = false;
+    if (vTrim.startsWith("linear-gradient")) {
+      gradientType = "linear";
+      const linearMatch = vTrim.match(
+        /^linear-gradient\(\s*(-?\d+)deg,\s*(.+)\)$/
+      );
+      if (linearMatch) {
+        gradientAngle = parseInt(linearMatch[1]);
+        const stopsPart = linearMatch[2];
+        const regex =
+          /(#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\s*(\d+)%/g;
+        let m;
+        let stops: GradientStop[] = [];
+        while ((m = regex.exec(stopsPart))) {
+          stops.push({ color: m[1], pos: parseInt(m[2]) });
+        }
+        if (stops.length >= 2) {
+          stops.sort((a, b) => a.pos - b.pos);
+          gradientStops = stops;
+          activeGradientStop = 0;
+          // Active color is the leftmost stop
+          hexValue = gradientStops[0].color;
+          const rgb = hexToRgb(hexValue);
+          if (rgb) {
+            const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+            h = hsv.h;
+            s = hsv.s;
+            vVal = hsv.v;
+            r = rgb.r;
+            g = rgb.g;
+            b = rgb.b;
+          }
+          parsed = true;
+        }
+      }
+    } else if (vTrim.startsWith("radial-gradient")) {
+      gradientType = "radial";
+      const radialMatch = vTrim.match(/^radial-gradient\(\s*circle,\s*(.+)\)$/);
+      if (radialMatch) {
+        const stopsPart = radialMatch[1];
+        const regex =
+          /(#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\s*(\d+)%/g;
+        let m;
+        let stops: GradientStop[] = [];
+        while ((m = regex.exec(stopsPart))) {
+          stops.push({ color: m[1], pos: parseInt(m[2]) });
+        }
+        if (stops.length >= 2) {
+          stops.sort((a, b) => a.pos - b.pos);
+          gradientStops = stops;
+          activeGradientStop = 0;
+          hexValue = gradientStops[0].color;
+          const rgb = hexToRgb(hexValue);
+          if (rgb) {
+            const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+            h = hsv.h;
+            s = hsv.s;
+            vVal = hsv.v;
+            r = rgb.r;
+            g = rgb.g;
+            b = rgb.b;
+          }
+          parsed = true;
+        }
+      }
+    }
+    return parsed;
+  }
+
+  // Parse initial value on mount
   $effect(() => {
     if (!inited && initialColor) {
       inited = true;
-      const rgb = hexToRgb(initialColor);
-      if (rgb) {
-        const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
-        h = hsv.h;
-        s = hsv.s;
-        v = hsv.v;
-        a = rgb.a ?? 255;
-        r = rgb.r;
-        g = rgb.g;
-        b = rgb.b;
-        hexValue = initialColor;
-        updateColorValue();
+      if (
+        initialColor.startsWith("linear-gradient") ||
+        initialColor.startsWith("radial-gradient")
+      ) {
+        if (!parseGradient(initialColor)) {
+          value = DEFAULT_VALUE;
+          parseGradient(DEFAULT_VALUE);
+          if (onchange) onchange(DEFAULT_VALUE);
+        }
+        updateColorCanvas();
+        updateHueCanvas();
+        updateAlphaCanvas();
+        updateGradientCanvas();
         updatePointerFromHsv();
-        if (hueCanvas) huePosition = (h / 360) * hueCanvas.width;
-        if (alphaCanvas) alphaPosition = (a / 255) * alphaCanvas.width;
+      } else {
+        const rgb = hexToRgb(initialColor);
+        if (rgb) {
+          const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+          h = hsv.h;
+          s = hsv.s;
+          vVal = hsv.v;
+          a = rgb.a ?? 255;
+          r = rgb.r;
+          g = rgb.g;
+          b = rgb.b;
+          hexValue = initialColor;
+          updateColorValue();
+          updatePointerFromHsv();
+          if (hueCanvas) huePosition = (h / 360) * hueCanvas.width;
+        }
       }
+    }
+  });
+
+  // When external value changes, always parse and update the active color.
+  $effect(() => {
+    if (value !== color) {
+      const trimmed = value.trim().replace(/;$/, "");
+      let parsed = false;
+      if (
+        trimmed.startsWith("linear-gradient") ||
+        trimmed.startsWith("radial-gradient")
+      ) {
+        parsed = parseGradient(trimmed);
+      } else {
+        const rgb = hexToRgb(trimmed);
+        if (rgb) {
+          const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+          h = hsv.h;
+          s = hsv.s;
+          vVal = hsv.v;
+          a = rgb.a ?? 255;
+          r = rgb.r;
+          g = rgb.g;
+          b = rgb.b;
+          hexValue = trimmed;
+          parsed = true;
+        }
+      }
+      if (!parsed) {
+        value = DEFAULT_VALUE;
+        parseGradient(DEFAULT_VALUE);
+        if (onchange) onchange(DEFAULT_VALUE);
+      }
+      updateColorCanvas();
+      updateHueCanvas();
+      updateAlphaCanvas();
+      updateGradientCanvas();
+      updatePointerFromHsv();
+      color = value;
     }
   });
 
@@ -84,7 +237,7 @@
     const d = max - min;
     let hVal = 0;
     const sVal = max === 0 ? 0 : d / max;
-    const vVal = max;
+    const vValLocal = max;
     if (max !== min) {
       switch (max) {
         case r:
@@ -102,7 +255,7 @@
     return {
       h: Math.round(hVal * 360),
       s: Math.round(sVal * 100),
-      v: Math.round(vVal * 100),
+      v: Math.round(vValLocal * 100),
     };
   }
 
@@ -168,25 +321,35 @@
     return `rgba(${r}, ${g}, ${b}, ${(alpha / 255).toFixed(2)})`;
   }
 
+  function getGradientCssString() {
+    const stops = [...gradientStops].sort((a, b) => a.pos - b.pos);
+    const stopsStr = stops
+      .map((st) => `${st.color} ${st.pos.toFixed(0)}%`)
+      .join(", ");
+    return gradientType === "linear"
+      ? `linear-gradient(${gradientAngle}deg, ${stopsStr})`
+      : `radial-gradient(circle, ${stopsStr})`;
+  }
+
   function updateColorCanvas() {
     if (!colorCanvas) return;
     const ctx = colorCanvas.getContext("2d");
     if (!ctx) return;
     const w = colorCanvas.width,
-      hVal = colorCanvas.height;
-    ctx.clearRect(0, 0, w, hVal);
+      hValCanvas = colorCanvas.height;
+    ctx.clearRect(0, 0, w, hValCanvas);
     ctx.fillStyle = `hsl(${h}, 100%, 50%)`;
-    ctx.fillRect(0, 0, w, hVal);
+    ctx.fillRect(0, 0, w, hValCanvas);
     const whiteGrad = ctx.createLinearGradient(0, 0, w, 0);
     whiteGrad.addColorStop(0, "rgba(255,255,255,1)");
     whiteGrad.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = whiteGrad;
-    ctx.fillRect(0, 0, w, hVal);
-    const blackGrad = ctx.createLinearGradient(0, 0, 0, hVal);
+    ctx.fillRect(0, 0, w, hValCanvas);
+    const blackGrad = ctx.createLinearGradient(0, 0, 0, hValCanvas);
     blackGrad.addColorStop(0, "rgba(0,0,0,0)");
     blackGrad.addColorStop(1, "rgba(0,0,0,1)");
     ctx.fillStyle = blackGrad;
-    ctx.fillRect(0, 0, w, hVal);
+    ctx.fillRect(0, 0, w, hValCanvas);
   }
 
   function updateHueCanvas() {
@@ -194,8 +357,8 @@
     const ctx = hueCanvas.getContext("2d");
     if (!ctx) return;
     const w = hueCanvas.width,
-      hVal = hueCanvas.height;
-    ctx.clearRect(0, 0, w, hVal);
+      hValHue = hueCanvas.height;
+    ctx.clearRect(0, 0, w, hValHue);
     const grad = ctx.createLinearGradient(0, 0, w, 0);
     grad.addColorStop(0, "#ff0000");
     grad.addColorStop(0.17, "#ffff00");
@@ -205,7 +368,7 @@
     grad.addColorStop(0.83, "#ff00ff");
     grad.addColorStop(1, "#ff0000");
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, hVal);
+    ctx.fillRect(0, 0, w, hValHue);
   }
 
   function updateAlphaCanvas() {
@@ -213,11 +376,11 @@
     const ctx = alphaCanvas.getContext("2d");
     if (!ctx) return;
     const w = alphaCanvas.width,
-      hVal = alphaCanvas.height;
-    ctx.clearRect(0, 0, w, hVal);
+      hValAlpha = alphaCanvas.height;
+    ctx.clearRect(0, 0, w, hValAlpha);
     const square = 8;
     for (let i = 0; i < w; i += square * 2) {
-      for (let j = 0; j < hVal; j += square * 2) {
+      for (let j = 0; j < hValAlpha; j += square * 2) {
         ctx.fillStyle = "#ccc";
         ctx.fillRect(i, j, square, square);
         ctx.fillRect(i + square, j + square, square, square);
@@ -227,17 +390,23 @@
     grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
     grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 1)`);
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, hVal);
+    ctx.fillRect(0, 0, w, hValAlpha);
   }
 
   function updateColorValue() {
-    const rgb = hsvToRgb(h, s, v);
+    const rgb = hsvToRgb(h, s, vVal);
     r = rgb.r;
     g = rgb.g;
     b = rgb.b;
     hexValue = rgbToHex(r, g, b, a);
-    color = hexValue;
-    value = hexValue;
+    if (activeGradientStop < 0 || activeGradientStop >= gradientStops.length) {
+      activeGradientStop = 0;
+    }
+    gradientStops[activeGradientStop].color = hexValue;
+    gradientStops = [...gradientStops];
+    const gradientStr = getGradientCssString();
+    color = gradientStr;
+    value = gradientStr;
     if (onchange) onchange(value);
     updateAlphaCanvas();
   }
@@ -246,11 +415,17 @@
     const hsv = rgbToHsv(r, g, b);
     h = hsv.h;
     s = hsv.s;
-    v = hsv.v;
+    vVal = hsv.v;
     hexValue = rgbToHex(r, g, b, a);
-    color = hexValue;
-    value = color;
-    if (onchange) onchange(color);
+    if (activeGradientStop < 0 || activeGradientStop >= gradientStops.length) {
+      activeGradientStop = 0;
+    }
+    gradientStops[activeGradientStop].color = hexValue;
+    gradientStops = [...gradientStops];
+    const gradientStr = getGradientCssString();
+    color = gradientStr;
+    value = gradientStr;
+    if (onchange) onchange(value);
     if (hueCanvas) huePosition = (h / 360) * hueCanvas.width;
     updatePointerFromHsv();
     updateColorCanvas();
@@ -273,13 +448,13 @@
   function updatePointerFromHsv() {
     if (!colorCanvas) return;
     pointer.x = (s / 100) * colorCanvas.width;
-    pointer.y = (1 - v / 100) * colorCanvas.height;
+    pointer.y = (1 - vVal / 100) * colorCanvas.height;
   }
 
   function updateHsvFromPointer() {
     if (!colorCanvas) return;
     s = Math.max(0, Math.min(100, (pointer.x / colorCanvas.width) * 100));
-    v = Math.max(
+    vVal = Math.max(
       0,
       Math.min(100, 100 - (pointer.y / colorCanvas.height) * 100)
     );
@@ -409,6 +584,133 @@
     colorRect = null;
   }
 
+  function updateGradientCanvas() {
+    if (!gradientCanvas) return;
+    const ctx = gradientCanvas.getContext("2d");
+    if (!ctx) return;
+    const w = gradientCanvas.width,
+      hValGrad = gradientCanvas.height;
+    ctx.clearRect(0, 0, w, hValGrad);
+    const sorted = [...gradientStops].sort((a, b) => a.pos - b.pos);
+    const grad = ctx.createLinearGradient(0, 0, w, 0);
+    sorted.forEach((stop) => {
+      grad.addColorStop(stop.pos / 100, stop.color);
+    });
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, hValGrad);
+  }
+
+  function handleGradientMousedown(e: MouseEvent) {
+    if (!gradientCanvas) return;
+    gradientRect = gradientCanvas.getBoundingClientRect();
+    const x = e.clientX - gradientRect.left;
+    const radius = 10;
+    const existing = gradientStops.find((stop) => {
+      const posX = (stop.pos / 100) * gradientRect!.width;
+      return Math.abs(posX - x) < radius;
+    });
+    if (!existing && gradientStops.length < maxGradientColors) {
+      let pos = (x / gradientRect.width) * 100;
+      pos = Math.max(0, Math.min(100, pos));
+      const newStop: GradientStop = {
+        pos,
+        color: gradientStops[activeGradientStop].color,
+      };
+      const stops = [...gradientStops, newStop].sort((a, b) => a.pos - b.pos);
+      activeGradientStop = stops.findIndex(
+        (stop) => stop.pos === newStop.pos && stop.color === newStop.color
+      );
+      gradientStops = stops;
+      updateColorValue();
+    }
+  }
+
+  function handleGradientPinMousedown(e: MouseEvent, index: number) {
+    e.stopPropagation();
+    gradientDraggingIndex = index;
+    isDraggingGradient = true;
+    if (gradientCanvas) gradientRect = gradientCanvas.getBoundingClientRect();
+    activeGradientStop = index;
+    // Set active color and update UI
+    hexValue = gradientStops[index].color;
+    updateFromHex();
+  }
+
+  function handleGradientMouseup() {
+    isDraggingGradient = false;
+    gradientDraggingIndex = null;
+    gradientRect = null;
+  }
+
+  function calcGradientPinLeft(pos: number): number {
+    if (!gradientCanvas) return 0;
+    const raw = (pos / 100) * gradientCanvas.width;
+    const halfPin = 9;
+    return Math.max(halfPin, Math.min(gradientCanvas.width - halfPin, raw));
+  }
+
+  function deleteActiveStop() {
+    if (gradientStops.length <= 2) return;
+    gradientStops = gradientStops.filter((_, i) => i !== activeGradientStop);
+    gradientStops = [...gradientStops].sort((a, b) => a.pos - b.pos);
+    activeGradientStop = 0;
+    updateColorValue();
+  }
+
+  function handleRgbInput(component: "r" | "g" | "b" | "a", val: number) {
+    const c = Math.max(0, Math.min(val, 255));
+    if (component === "r") r = c;
+    else if (component === "g") g = c;
+    else if (component === "b") b = c;
+    else if (component === "a") a = c;
+    if (component === "a" && alphaCanvas) {
+      alphaPosition = (a / 255) * alphaCanvas.width;
+    }
+    updateFromRgb();
+  }
+
+  $effect(() => {
+    resizeCanvases();
+    const handleResize = () => resizeCanvases();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  });
+
+  $effect(() => {
+    const handleGlobalMouseup = () => {
+      isDragging = false;
+      isDraggingHue = false;
+      isDraggingAlpha = false;
+      isDraggingGradient = false;
+      gradientDraggingIndex = null;
+      colorRect = null;
+      gradientRect = null;
+    };
+    const handleGlobalMousemove = (e: MouseEvent) => {
+      if (isDragging) handleColorCanvasMousemove(e);
+      if (isDraggingHue) handleHueCanvasMousemove(e);
+      if (isDraggingAlpha) handleAlphaCanvasMousemove(e);
+      if (
+        isDraggingGradient &&
+        gradientDraggingIndex !== null &&
+        gradientRect
+      ) {
+        const xPos = e.clientX - gradientRect.left;
+        let newPos = (xPos / gradientRect.width) * 100;
+        newPos = Math.max(0, Math.min(100, newPos));
+        gradientStops[gradientDraggingIndex].pos = newPos;
+        gradientStops = [...gradientStops].sort((a, b) => a.pos - b.pos);
+        updateColorValue();
+      }
+    };
+    document.addEventListener("mouseup", handleGlobalMouseup);
+    document.addEventListener("mousemove", handleGlobalMousemove);
+    return () => {
+      document.removeEventListener("mouseup", handleGlobalMouseup);
+      document.removeEventListener("mousemove", handleGlobalMousemove);
+    };
+  });
+
   function resizeCanvases() {
     if (colorCanvas) {
       const rc = colorCanvas.getBoundingClientRect();
@@ -431,53 +733,12 @@
       updateAlphaCanvas();
       alphaPosition = (a / 255) * alphaCanvas.width;
     }
-  }
-
-  $effect(() => {
-    resizeCanvases();
-    const handleResize = () => resizeCanvases();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  });
-
-  $effect(() => {
-    const handleGlobalMouseup = () => {
-      isDragging = false;
-      isDraggingHue = false;
-      isDraggingAlpha = false;
-      colorRect = null;
-    };
-    const handleGlobalMousemove = (e: MouseEvent) => {
-      if (isDragging) handleColorCanvasMousemove(e);
-      if (isDraggingHue) handleHueCanvasMousemove(e);
-      if (isDraggingAlpha) handleAlphaCanvasMousemove(e);
-    };
-    document.addEventListener("mouseup", handleGlobalMouseup);
-    document.addEventListener("mousemove", handleGlobalMousemove);
-    return () => {
-      document.removeEventListener("mouseup", handleGlobalMouseup);
-      document.removeEventListener("mousemove", handleGlobalMousemove);
-    };
-  });
-
-  $effect(() => {
-    if (value !== color) {
-      hexValue = value;
-      updateFromHex();
-      color = value;
+    if (gradientCanvas) {
+      const rc = gradientCanvas.getBoundingClientRect();
+      gradientCanvas.width = rc.width;
+      gradientCanvas.height = rc.height;
+      updateGradientCanvas();
     }
-  });
-
-  function handleRgbInput(component: "r" | "g" | "b" | "a", val: number) {
-    const c = Math.max(0, Math.min(val, component === "a" ? 255 : 255));
-    if (component === "r") r = c;
-    else if (component === "g") g = c;
-    else if (component === "b") b = c;
-    else if (component === "a") a = c;
-    if (component === "a" && alphaCanvas) {
-      alphaPosition = (a / 255) * alphaCanvas.width;
-    }
-    updateFromRgb();
   }
 </script>
 
@@ -501,11 +762,70 @@
     ></div>
   </div>
   <div class="p-2 sm:p-3">
-    <div class="mb-2 flex justify-end">
-      <div
-        class="h-6 w-6 rounded border border-gray-300 dark:border-gray-600"
-        style="background: {color};"
-      ></div>
+    <div class="mb-2 flex flex-wrap gap-2 sm:mb-3">
+      <div class="ml-auto flex items-center">
+        <div
+          class="h-6 w-6 rounded border border-gray-300 dark:border-gray-600"
+          style="background: {color};"
+        ></div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <div class="mb-2 flex items-center gap-2">
+        <select
+          bind:value={gradientType}
+          class="rounded-md border border-gray-600 bg-transparent px-1.5 py-0.5 text-xs focus:outline-none"
+          onchange={() => updateColorValue()}
+        >
+          <option value="linear">Linear</option>
+          <option value="radial">Radial</option>
+        </select>
+        {#if gradientType === "linear"}
+          <input
+            type="number"
+            min="0"
+            max="360"
+            bind:value={gradientAngle}
+            oninput={() => updateColorValue()}
+            class="w-16 rounded-md border border-gray-600 bg-transparent px-1.5 py-0.5 text-xs focus:outline-none"
+          />
+        {/if}
+        {#if gradientStops.length > 2}
+          <Button
+            variant="destructive"
+            onclick={deleteActiveStop}
+            size="icon"
+            class="h-5 w-5"
+          >
+            <IconTrash />
+          </Button>
+        {/if}
+      </div>
+      <div class="relative mb-2 h-4 w-full">
+        <div class="absolute inset-0 overflow-hidden rounded-full">
+          <canvas
+            bind:this={gradientCanvas}
+            class="h-full w-full cursor-pointer"
+            onmousedown={handleGradientMousedown}
+            onmouseup={handleGradientMouseup}
+          ></canvas>
+        </div>
+        {#each gradientStops as stop, i}
+          <div
+            role="slider"
+            tabindex="0"
+            aria-valuenow={stop.pos}
+            class="gradient-pin"
+            style="left: {calcGradientPinLeft(
+              stop.pos
+            )}px; top: 50%; transform: translate(-50%, -50%); background-color: {stop.color}; border: {activeGradientStop ===
+            i
+              ? '4px solid blue'
+              : '4px solid white'};"
+            onmousedown={(e) => handleGradientPinMousedown(e, i)}
+          ></div>
+        {/each}
+      </div>
     </div>
     <div class="mb-4">
       <div class="relative mb-2 h-4 w-full">
@@ -656,6 +976,20 @@
     pointer-events: none;
     background: transparent;
     z-index: 10;
+  }
+  .gradient-pin {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    z-index: 11;
+    cursor: pointer;
+  }
+  @media (max-width: 639px) {
+    input[type="text"] {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
   }
   canvas {
     touch-action: none;

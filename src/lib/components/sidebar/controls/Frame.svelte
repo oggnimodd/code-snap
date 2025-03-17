@@ -3,6 +3,7 @@
   import * as Select from "$lib/components/ui/select/index.js";
   import { Slider } from "$lib/components/ui/slider/index.js";
   import { Switch } from "$lib/components/ui/switch/index.js";
+  import BackgroundControl from "./BackgroundControl.svelte";
   import LabeledRow from "./LabeledRow.svelte";
 
   const FRAME_PADDING_OPTIONS = [
@@ -113,6 +114,17 @@
           max={1}
           step={0.01}
           bind:value={frameStore.opacity}
+        />
+      </LabeledRow>
+
+      <!-- Background Control -->
+      <LabeledRow label="Background">
+        <BackgroundControl
+          type={frameStore.background.type}
+          value={frameStore.background.value}
+          onChange={(value) => {
+            frameStore.background = value;
+          }}
         />
       </LabeledRow>
 
