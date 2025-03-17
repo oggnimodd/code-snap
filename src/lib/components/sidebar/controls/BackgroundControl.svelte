@@ -13,13 +13,13 @@
   import { onMount } from "svelte";
   import { Input } from "$lib/components/ui/input/index.js";
 
-  interface BackgroundControlProps {
+  export interface BackgroundControlProps {
     type: BackgroundType;
     value: BackgroundValue;
-    onChange: (value: { type: BackgroundType; value: BackgroundValue }) => void;
+    onChange: (value: { type: BackgroundType; value: string }) => void;
   }
 
-  let { type, value }: BackgroundControlProps = $props();
+  let { type, value, onChange }: BackgroundControlProps = $props();
 
   let isFirstRender = true;
 
@@ -47,7 +47,6 @@
     if (target.files && target.files.length > 0) {
       const file = target.files[0];
       if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
-        // Optionally notify the user of an invalid file type
         return;
       }
       const reader = new FileReader();
@@ -80,14 +79,11 @@
 
   $effect(() => {
     if (activeTab === "gradient") {
-      type = "gradient";
-      value = gradientColorValue;
+      onChange({ type: "gradient", value: gradientColorValue });
     } else if (activeTab === "color") {
-      type = "solid";
-      value = solidColorValue;
+      onChange({ type: "solid", value: solidColorValue });
     } else if (activeTab === "image") {
-      type = "image";
-      value = imageValue;
+      onChange({ type: "image", value: imageValue });
     }
   });
 
@@ -205,12 +201,7 @@
           class="max-w-xs"
         />
         {#if imageValue}
-          <!-- svelte-ignore a11y_img_redundant_alt -->
-          <img
-            src={imageValue}
-            alt="Background image preview"
-            class="max-w-xs rounded-md border"
-          />
+          <img src={imageValue} alt="" class="max-w-xs rounded-md border" />
           <button
             type="button"
             onclick={removeImage}
