@@ -6,18 +6,20 @@
 
 <div class="min-h-screen" style="background: {selectedColor};">
   Color : {selectedColor}
-  <div class="mx-auto w-4/5 py-20 sm:w-72">
-    <ColorPicker
-      bind:value={selectedColor}
-      initialColor={selectedColor}
-      initialMode="solid"
-    />
-  </div>
-  <div class="mx-auto w-4/5 py-20 sm:w-72">
-    <ColorPicker
-      bind:value={selectedColor}
-      initialColor={selectedColor}
-      initialMode="solid"
-    />
+  <div class="flex flex-wrap gap-10">
+    <div class="mx-auto w-4/5 w-72 py-20">
+      <ColorPicker
+        bind:value={selectedColor}
+        initialColor={selectedColor}
+        initialMode="solid"
+      />
+    </div>
+    <div class="mx-auto w-4/5 w-72 py-20">
+      <ColorPicker
+        bind:value={selectedColor}
+        initialColor={selectedColor}
+        initialMode="solid"
+      />
+    </div>
   </div>
 </div>

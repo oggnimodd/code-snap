@@ -271,11 +271,11 @@
     g = rgb.g;
     b = rgb.b;
     hexValue = rgbToHex(r, g, b, a);
+
     if (mode === "solid") {
-      color = value.startsWith("#")
-        ? rgbToHex(r, g, b, a)
-        : rgbToCss(r, g, b, a);
-      value = color;
+      // Always ensure solid mode uses hex format
+      color = hexValue;
+      value = hexValue;
     } else {
       if (
         activeGradientStop < 0 ||
@@ -289,6 +289,7 @@
       color = gradientStr;
       value = gradientStr;
     }
+
     if (onchange) onchange(value);
     updateAlphaCanvas();
   }
@@ -420,8 +421,23 @@
 
   function handleModeToggle(newMode: "solid" | "gradient") {
     mode = newMode;
+
+    // When switching back to solid mode, ensure we're outputting a HEX value
+    if (newMode === "solid") {
+      // Force hex format when switching back to solid mode
+      const rgbColor = hsvToRgb(h, s, v);
+      r = rgbColor.r;
+      g = rgbColor.g;
+      b = rgbColor.b;
+      hexValue = rgbToHex(r, g, b, a);
+      color = hexValue;
+      value = color;
+      if (onchange) onchange(color);
+    } else {
+      updateColorValue();
+    }
+
     updateColorCanvas();
-    updateColorValue();
   }
 
   function handleRgbInput(component: "r" | "g" | "b" | "a", val: number) {
@@ -642,10 +658,17 @@
 
   $effect(() => {
     if (value !== color) {
+      // Detect gradient format and switch mode if needed
       if (
         value.startsWith("linear-gradient") ||
         value.startsWith("radial-gradient")
       ) {
+        // Switch to gradient mode if needed
+        if (mode !== "gradient") {
+          mode = "gradient";
+        }
+
+        // Always parse and update gradient state when receiving a gradient value
         if (value.startsWith("linear-gradient")) {
           gradientType = "linear";
           const linearMatch = value.match(
@@ -675,6 +698,13 @@
                 g = rgb.g;
                 b = rgb.b;
               }
+
+              // Force update all canvases and UI elements
+              updateColorCanvas();
+              updateHueCanvas();
+              updateAlphaCanvas();
+              updateGradientCanvas();
+              updatePointerFromHsv();
             }
           }
         } else if (value.startsWith("radial-gradient")) {
@@ -705,14 +735,26 @@
                 g = rgb.g;
                 b = rgb.b;
               }
+
+              // Force update all canvases and UI elements
+              updateColorCanvas();
+              updateHueCanvas();
+              updateAlphaCanvas();
+              updateGradientCanvas();
+              updatePointerFromHsv();
             }
           }
         }
-        color = value;
       } else if (value.startsWith("#")) {
+        // If we receive a hex value but we're in gradient mode, switch to solid mode
+        if (mode !== "solid") {
+          mode = "solid";
+        }
         hexValue = value;
         updateFromHex();
       }
+
+      color = value;
     }
   });
 </script>
