@@ -74,6 +74,7 @@
     "@libsql/client": "^0.14.0",
     "@mistralai/mistralai": "^1.5.0",
     "@tabler/icons-svelte": "^3.29.0",
+    "@testing-library/svelte": "^5.2.7",
     "clsx": "^2.1.1",
     "colord": "^2.9.3",
     "dompurify": "^3.2.4",
