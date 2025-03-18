@@ -1,11 +1,17 @@
 <script lang="ts">
   import CodeMirror from "svelte-codemirror-editor";
   import { javascript } from "@codemirror/lang-javascript";
-  import { editorStore, fontStore } from "$lib/stores/editor.svelte";
+  import {
+    editorStore,
+    fontStore,
+    windowStore,
+  } from "$lib/stores/editor.svelte";
   import { EditorView, lineNumbers as cmLineNumbers } from "@codemirror/view";
   import { Compartment } from "@codemirror/state";
   import type { Extension } from "@codemirror/state";
   import { FONT_FAMILY_OPTIONS } from "$lib/config";
+
+  // and available in this component
 
   let value = $state("");
   let view: EditorView | null = $state(null);
@@ -102,6 +108,38 @@
     return mapping[fontStore.weight] || "400";
   });
 
+  // Computed styles for shadow
+  let computedBoxShadow = $derived.by(() => {
+    switch (windowStore.shadow) {
+      case "none":
+        return "none";
+      case "small":
+        return "0px 2px 4px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06)";
+      case "medium":
+        return "0px 4px 8px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.08)";
+      case "large":
+        return "0px 10px 15px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1)";
+      default:
+        return "none";
+    }
+  });
+
+  // Computed styles for border
+  let computedBorder = $derived.by(() => {
+    switch (windowStore.border) {
+      case "none":
+        return "none";
+      case "thin":
+        return "1px solid #ccc";
+      case "normal":
+        return "2px solid #ccc";
+      case "thick":
+        return "4px solid #ccc";
+      default:
+        return "none";
+    }
+  });
+
   function focusEditor() {
     if (view) {
       view.focus();
@@ -110,14 +148,20 @@
 </script>
 
 <div
+  class="rounded-xl"
   onclick={focusEditor}
-  style="--editor-font-family: {computedFontFamily}; --editor-font-weight: {computedFontWeight}; 
-  --editor-font-feature-settings: {fontStore.ligatures
+  style="
+    --editor-font-family: {computedFontFamily}; 
+    --editor-font-weight: {computedFontWeight}; 
+    --editor-font-feature-settings: {fontStore.ligatures
     ? '\"liga\" 1, \"clig\" 1, \"calt\" 1'
     : '\"liga\" 0, \"clig\" 0, \"calt\" 0'}; 
-  --editor-font-variant-ligatures: {fontStore.ligatures
+    --editor-font-variant-ligatures: {fontStore.ligatures
     ? 'common-ligatures'
-    : 'none'}"
+    : 'none'};
+    box-shadow: {computedBoxShadow};
+    border: {computedBorder};
+  "
 >
   <CodeMirror
     class="w-auto"
@@ -144,7 +188,7 @@
       --editor-font-family,
       "IBM Plex Mono, monospace"
     ) !important;
-    @apply border-r-0 bg-transparent !important;
+    @apply select-none border-r-0 bg-transparent !important;
   }
   :global(.cm-editor) {
     @apply rounded-xl px-4 py-3 text-lg;
