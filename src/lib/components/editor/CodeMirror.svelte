@@ -133,6 +133,10 @@
     @apply text-inherit !important;
   }
   :global(.cm-gutters) {
+    font-family: var(
+      --editor-font-family,
+      "IBM Plex Mono, monospace"
+    ) !important;
     @apply border-r-0 bg-transparent !important;
   }
   :global(.cm-editor) {
