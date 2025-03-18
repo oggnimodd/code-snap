@@ -22,8 +22,7 @@
   let { type, value, onChange }: BackgroundControlProps = $props();
 
   let isFirstRender = true;
-
-  // Local state for each background variant
+  let popoverOpen = $state(false);
   let solidColorValue = $state(type === "solid" ? value : "#000000");
   let gradientColorValue = $state(
     type === "gradient"
@@ -31,7 +30,6 @@
       : "linear-gradient(-45deg, #4954de 0%, #49ddd8 100%)"
   );
   let imageValue = $state(type === "image" ? value : "");
-
   let activeTab = $state<"gradient" | "color" | "image">("gradient");
 
   const handleSolidColorChange = (color: string) => {
@@ -59,9 +57,13 @@
 
   const removeImage = () => {
     imageValue = "";
-    activeTab = "gradient";
+    // Only update if the current value differs
+    if (type !== "gradient" || value !== gradientColorValue) {
+      onChange({ type: "gradient", value: gradientColorValue });
+    }
   };
 
+  // Initialize state on first render
   $effect(() => {
     if (isFirstRender) {
       if (type === "gradient") {
@@ -77,13 +79,36 @@
     }
   });
 
+  // Update parent's value only if it differs
   $effect(() => {
-    if (activeTab === "gradient") {
+    if (
+      activeTab === "gradient" &&
+      (type !== "gradient" || value !== gradientColorValue)
+    ) {
       onChange({ type: "gradient", value: gradientColorValue });
-    } else if (activeTab === "color") {
+    } else if (
+      activeTab === "color" &&
+      (type !== "solid" || value !== solidColorValue)
+    ) {
       onChange({ type: "solid", value: solidColorValue });
-    } else if (activeTab === "image") {
+    } else if (
+      activeTab === "image" &&
+      imageValue &&
+      (type !== "image" || value !== imageValue)
+    ) {
       onChange({ type: "image", value: imageValue });
+    }
+  });
+
+  // When popover closes in image tab with no image, fallback to gradient if needed
+  $effect(() => {
+    if (
+      !popoverOpen &&
+      activeTab === "image" &&
+      !imageValue &&
+      (type !== "gradient" || value !== gradientColorValue)
+    ) {
+      onChange({ type: "gradient", value: gradientColorValue });
     }
   });
 
@@ -122,7 +147,7 @@
   ];
 </script>
 
-<Popover.Root>
+<Popover.Root bind:open={popoverOpen}>
   <Popover.Trigger class="w-full">
     {#if (type === "solid" || type === "gradient") && value}
       <div class="h-5 w-full rounded-md" style="background: {value};"></div>
