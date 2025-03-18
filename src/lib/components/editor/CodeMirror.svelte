@@ -208,4 +208,8 @@
       normal
     ) !important;
   }
+
+  :global(.cm-gutter.cm-foldGutter) {
+    display: none !important;
+  }
 </style>
