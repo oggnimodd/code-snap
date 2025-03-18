@@ -3,6 +3,7 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import Editor from "$lib/components/editor/Editor.svelte";
+  import { exportToPng } from "$lib/utils/export-image";
 </script>
 
 <Sidebar.Provider>
@@ -10,7 +11,7 @@
   <Sidebar.Inset class="flex h-full flex-col">
     <header class="flex h-16 w-full shrink-0 items-center gap-2 border-b px-4">
       <Sidebar.Trigger class="-ml-1" />
-      <Button class="ml-auto">Export</Button>
+      <Button onclick={exportToPng} class="ml-auto">Export</Button>
     </header>
     <div class="relative flex-1 overflow-hidden">
       <div
