@@ -3,32 +3,7 @@
   import * as Select from "$lib/components/ui/select/index.js";
   import { Switch } from "$lib/components/ui/switch/index.js";
   import LabeledRow from "./LabeledRow.svelte";
-
-  // Font family options (store real values)
-  const FONT_FAMILY_OPTIONS = [
-    { label: "Jetbrains Mono", value: "jetbrains-mono" },
-    { label: "Geist Mono", value: "geist-mono" },
-    { label: "Agave", value: "agave" },
-    { label: "Fira Code", value: "fira-code" },
-    { label: "IBM Plex Mono", value: "ibm-plex-mono" },
-    { label: "Source Code pro", value: "source-code-pro" },
-    { label: "Overpass Mono", value: "overpass-mono" },
-    { label: "Space Mono", value: "space-mono" },
-    { label: "Cascadia Code", value: "cascadia-code" },
-    { label: "Monaspace Argon", value: "monaspace-argon" },
-    { label: "Monaspace Krypton", value: "monaspace-krypton" },
-    { label: "Monaspace Neon", value: "monaspace-neon" },
-    { label: "Monaspace Radon", value: "monaspace-radon" },
-    { label: "Monaspace Xenon", value: "monaspace-xenon" },
-  ];
-
-  // Font weight options (store real values)
-  const FONT_WEIGHT_OPTIONS = [
-    { label: "Regular", value: "regular" },
-    { label: "Medium", value: "medium" },
-    { label: "Bold", value: "bold" },
-    { label: "Light", value: "light" },
-  ];
+  import { FONT_FAMILY_OPTIONS, FONT_WEIGHT_OPTIONS } from "$lib/config";
 
   // Local reactive copies
   let family = $state(fontStore.family);

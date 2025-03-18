@@ -4,70 +4,7 @@
   import { Switch } from "$lib/components/ui/switch/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import LabeledRow from "./LabeledRow.svelte";
-
-  // Language options (value is the actual stored string)
-  const LANGUAGE_OPTIONS = [
-    { label: "Javascript", value: "javascript" },
-    { label: "Typescript", value: "typescript" },
-    { label: "Css", value: "css" },
-    { label: "Html", value: "html" },
-    { label: "C", value: "c" },
-    { label: "C#", value: "csharp" },
-    { label: "C++", value: "cpp" },
-    { label: "Dart", value: "dart" },
-    { label: "Dockerfile", value: "dockerfile" },
-    { label: "Go", value: "go" },
-    { label: "Java", value: "java" },
-    { label: "JSON", value: "json" },
-    { label: "Kotlin", value: "kotlin" },
-    { label: "Less", value: "less" },
-    { label: "Markdown", value: "markdown" },
-    { label: "Pascal", value: "pascal" },
-    { label: "PHP", value: "php" },
-    { label: "Plain Text", value: "plaintext" },
-    { label: "Protobuf", value: "protobuf" },
-    { label: "Python", value: "python" },
-    { label: "Ruby", value: "ruby" },
-    { label: "Rust", value: "rust" },
-    { label: "Scala", value: "scala" },
-    { label: "Scss", value: "scss" },
-    { label: "Shell", value: "shell" },
-    { label: "SQL", value: "sql" },
-    { label: "Swift", value: "swift" },
-    { label: "Visual Basic", value: "vb" },
-    { label: "XML", value: "xml" },
-    { label: "Yaml", value: "yaml" },
-  ];
-
-  // Theme options (value is the actual stored string)
-  const THEME_OPTIONS = [
-    { label: "Fleet Dark", value: "fleet-dark" },
-    { label: "VSCode Dark", value: "vscode-dark" },
-    { label: "XCode Dark", value: "xcode-dark" },
-    { label: "Night Owl", value: "night-owl" },
-    { label: "GitHub Dark", value: "github-dark" },
-    { label: "GitHub Dark Dimmed", value: "github-dark-dimmed" },
-    { label: "Dracula", value: "dracula" },
-    { label: "XCode Light", value: "xcode-light" },
-    { label: "Material Ocean", value: "material-ocean" },
-    { label: "Synthwave '84", value: "synthwave-84" },
-    { label: "Poimandres", value: "poimandres" },
-    { label: "Material Volcano", value: "material-volcano" },
-    { label: "One dark", value: "one-dark" },
-    { label: "Panda", value: "panda" },
-    { label: "Aura Dark", value: "aura-dark" },
-    { label: "One light", value: "one-light" },
-    { label: "Material Palenight", value: "material-palenight" },
-    { label: "GitHub Light", value: "github-light" },
-    { label: "Moonlight", value: "moonlight" },
-    { label: "Vitesse Dark", value: "vitesse-dark" },
-    { label: "Duotone Sea", value: "duotone-sea" },
-    { label: "Duotone Dark", value: "duotone-dark" },
-    { label: "Shades Of Purple", value: "shades-of-purple" },
-    { label: "Coldark Cold", value: "coldark-cold" },
-    { label: "Coldark Dark", value: "coldark-dark" },
-    { label: "Material Light", value: "material-light" },
-  ];
+  import { LANGUAGE_OPTIONS, THEME_OPTIONS } from "$lib/config";
 
   // Local reactive copies
   let languageStr = $state(editorStore.language);

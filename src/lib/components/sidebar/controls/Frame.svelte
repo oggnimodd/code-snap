@@ -5,27 +5,11 @@
   import { Switch } from "$lib/components/ui/switch/index.js";
   import BackgroundControl from "./BackgroundControl.svelte";
   import LabeledRow from "./LabeledRow.svelte";
-
-  const FRAME_PADDING_OPTIONS = [
-    { label: "16", value: "16" },
-    { label: "32", value: "32" },
-    { label: "64", value: "64" },
-    { label: "128", value: "128" },
-  ];
-
-  const FRAME_RADIUS_OPTIONS = [
-    { label: "0", value: "0" },
-    { label: "8", value: "8" },
-    { label: "16", value: "16" },
-    { label: "24", value: "24" },
-  ];
-
-  const ASPECT_RATIO_OPTIONS = [
-    { label: "Auto", value: "auto" },
-    { label: "16:9", value: "16:9" },
-    { label: "4:3", value: "4:3" },
-    { label: "1:1", value: "1:1" },
-  ];
+  import {
+    ASPECT_RATIO_OPTIONS,
+    FRAME_PADDING_OPTIONS,
+    FRAME_RADIUS_OPTIONS,
+  } from "$lib/config";
 
   // Create reactive string states for padding and radius.
   let paddingStr = $state(frameStore.padding.toString());

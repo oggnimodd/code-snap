@@ -44,7 +44,7 @@ export const windowStore = $state({
 export const editorStore = $state({
   // syntax
   language: "typescript",
-  theme: "aura-dark",
+  theme: "aura",
   lineNumbers: true,
   // Only applied when lineNumbers is true
   lineNumberStart: 1,

@@ -3,35 +3,40 @@
   const { children } = $props();
 </script>
 
-<div class="relative" style="border-radius: {frameStore.radius}px;">
-  <!-- Checkered background layer (not exportable) -->
+<div class="flex justify-center" style="width: 100%;">
   <div
-    class="bg-checkered absolute inset-0"
-    style="border-radius: {frameStore.radius}px;"
-  ></div>
-
-  <!-- Exportable wrapper with background and content -->
-  <div
-    id="exportable-content"
-    class="relative"
+    class="relative inline-block"
     style="border-radius: {frameStore.radius}px;"
   >
-    <!-- Actual background with opacity -->
+    <!-- Checkered background layer (not exportable) -->
     <div
-      class="absolute inset-0"
-      style="
-         background: {frameStore.background.value};
-         opacity: {frameStore.visible ? frameStore.opacity : 0};
-         border-radius: {frameStore.radius}px;
-       "
+      class="bg-checkered absolute inset-0"
+      style="border-radius: {frameStore.radius}px;"
     ></div>
 
-    <!-- Content with smooth transition for dimensions -->
+    <!-- Exportable wrapper with background and content -->
     <div
-      class="relative z-10 transition-all duration-300 ease-in-out"
-      style="padding: {frameStore.padding}px; border-radius: {frameStore.radius}px;"
+      id="exportable-content"
+      class="relative"
+      style="border-radius: {frameStore.radius}px;"
     >
-      {@render children()}
+      <!-- Actual background with opacity -->
+      <div
+        class="absolute inset-0"
+        style="
+           background: {frameStore.background.value};
+           opacity: {frameStore.visible ? frameStore.opacity : 0};
+           border-radius: {frameStore.radius}px;
+         "
+      ></div>
+
+      <!-- Content with smooth transition for dimensions -->
+      <div
+        class="relative z-10 transition-all duration-300 ease-in-out"
+        style="padding: {frameStore.padding}px; border-radius: {frameStore.radius}px;"
+      >
+        {@render children()}
+      </div>
     </div>
   </div>
 </div>
