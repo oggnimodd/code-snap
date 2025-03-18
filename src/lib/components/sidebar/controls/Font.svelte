@@ -60,12 +60,26 @@
       >
         <Select.Trigger>
           {#each FONT_FAMILY_OPTIONS as option}
-            {#if option.value === family}{option.label}{/if}
+            {#if option.value === family}
+              <span
+                class="text-left"
+                style="font-family: '{option.label}', monospace;"
+              >
+                {option.label}
+              </span>
+            {/if}
           {/each}
         </Select.Trigger>
         <Select.Content>
           {#each FONT_FAMILY_OPTIONS as option}
-            <Select.Item value={option.value}>{option.label}</Select.Item>
+            <Select.Item value={option.value}>
+              <span
+                class="text-left"
+                style="font-family: '{option.label}', monospace;"
+              >
+                {option.label}
+              </span>
+            </Select.Item>
           {/each}
         </Select.Content>
       </Select.Root>

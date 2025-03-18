@@ -4,6 +4,12 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import Editor from "$lib/components/editor/Editor.svelte";
   import { exportToPng } from "$lib/utils/export-image";
+  import { loadFonts } from "$lib/utils/fonts";
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    loadFonts();
+  });
 </script>
 
 <Sidebar.Provider>

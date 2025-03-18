@@ -89,14 +89,8 @@ export const FONT_FAMILY_OPTIONS = [
   { label: "Fira Code", value: "fira-code" },
   { label: "IBM Plex Mono", value: "ibm-plex-mono" },
   { label: "Source Code pro", value: "source-code-pro" },
-  { label: "Overpass Mono", value: "overpass-mono" },
   { label: "Space Mono", value: "space-mono" },
   { label: "Cascadia Code", value: "cascadia-code" },
-  { label: "Monaspace Argon", value: "monaspace-argon" },
-  { label: "Monaspace Krypton", value: "monaspace-krypton" },
-  { label: "Monaspace Neon", value: "monaspace-neon" },
-  { label: "Monaspace Radon", value: "monaspace-radon" },
-  { label: "Monaspace Xenon", value: "monaspace-xenon" },
 ];
 
 export const FONT_WEIGHT_OPTIONS = [
