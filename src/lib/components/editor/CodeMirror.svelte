@@ -210,6 +210,8 @@
   }
 
   :global(.cm-gutter.cm-foldGutter) {
-    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 </style>
