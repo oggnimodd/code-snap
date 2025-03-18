@@ -50,6 +50,10 @@
 
   // Sync lineNumberStart
   $effect(() => {
+    if (lineNumberStart <= 0) {
+      lineNumberStart = 1; // Default to 1 if not positive
+    }
+
     if (lineNumberStart !== editorStore.lineNumberStart) {
       editorStore.lineNumberStart = lineNumberStart;
     }
@@ -114,7 +118,7 @@
     <!-- Line Start Control (hide unless lineNumbers is true) -->
     {#if lineNumbers}
       <LabeledRow label="Line Start">
-        <Input type="number" bind:value={lineNumberStart} />
+        <Input min={1} type="number" bind:value={lineNumberStart} />
       </LabeledRow>
     {/if}
   </div>
