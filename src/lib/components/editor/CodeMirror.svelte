@@ -101,9 +101,16 @@
     };
     return mapping[fontStore.weight] || "400";
   });
+
+  function focusEditor() {
+    if (view) {
+      view.focus();
+    }
+  }
 </script>
 
 <div
+  onclick={focusEditor}
   style="--editor-font-family: {computedFontFamily}; --editor-font-weight: {computedFontWeight}; 
   --editor-font-feature-settings: {fontStore.ligatures
     ? '\"liga\" 1, \"clig\" 1, \"calt\" 1'
