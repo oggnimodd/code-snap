@@ -1,7 +1,6 @@
 <script lang="ts">
   import { windowStore } from "$lib/stores/editor.svelte";
   import * as Select from "$lib/components/ui/select/index.js";
-  import { Switch } from "$lib/components/ui/switch/index.js";
   import LabeledRow from "./LabeledRow.svelte";
 
   // Shadow options
@@ -55,11 +54,6 @@
   <h2 class="font-semibold text-foreground">Window Controls</h2>
 
   <div class="flex flex-col gap-4 px-2">
-    <!-- Header Control (Switch for Yes/No) -->
-    <LabeledRow label="Header">
-      <Switch bind:checked={windowStore.header} />
-    </LabeledRow>
-
     <!-- Shadow Control -->
     <LabeledRow label="Shadow">
       <Select.Root

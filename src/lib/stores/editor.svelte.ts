@@ -33,8 +33,6 @@ export const frameStore: FrameStore = $state({
 });
 
 export const windowStore = $state({
-  // true => "Yes", false => "No"
-  header: true,
   // "none", "small", "medium", "large"
   shadow: "small",
   // "none", "thin", "normal", "thick", etc.
