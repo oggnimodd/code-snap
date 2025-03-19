@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ActionBar from "../action-bar/ActionBar.svelte";
   import CodeMirror from "./CodeMirror.svelte";
   import Frame from "./Frame.svelte";
 </script>
@@ -9,6 +10,10 @@
       <Frame>
         <CodeMirror />
       </Frame>
+
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2">
+        <ActionBar />
+      </div>
     </div>
   </div>
 </div>
