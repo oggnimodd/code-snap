@@ -11,6 +11,16 @@ export const SOLID_COLOR_PRESETS = [
   "#82C91E",
   "#1ABC9C",
   "#E74C3C",
+  "#FF9A8D",
+  "#FF6F91",
+  "#FF9671",
+  "#FFC75F",
+  "#F9F871",
+  "#C5E86C",
+  "#9ADEB0",
+  "#66C2FF",
+  "#A1C6EA",
+  "#D4A5A5",
 ];
 
 export const GRADIENT_COLOR_PRESETS = [
@@ -26,4 +36,16 @@ export const GRADIENT_COLOR_PRESETS = [
   "linear-gradient(135deg, #11998e 0%, #38ef7d 50%, #43e97b 100%)",
   "linear-gradient(150deg, #1ABC9C 0%, #E74C3C 100%)",
   "linear-gradient(90deg, #FF8C00 0%, #FFD700 100%)",
+  "linear-gradient(135deg, #9b59b6 0%, #dcd6f7 100%)",
+  "linear-gradient(120deg, #ff9a9e 0%, #fad0c4 100%)",
+  "linear-gradient(90deg, #a1c4fd 0%, #c2e9fb 100%)",
+  "linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #f9e6e6 100%)",
+  "linear-gradient(150deg, #a6c0fe 0%, #f68084 50%, #ffe6e6 100%)",
+  "linear-gradient(120deg, #89f7fe 0%, #66a6ff 50%, #e0eefe 100%)",
+  "linear-gradient(135deg, #ffecd2 0%, #fcb69f 33%, #f5a623 66%, #ffffff 100%)",
+  "linear-gradient(150deg, #d4fc79 0%, #96e6a1 33%, #c7ecee 66%, #ffffff 100%)",
+  "linear-gradient(135deg, #8ec5fc 0%, #e0c3fc 100%)",
+  "linear-gradient(120deg, #f6d365 0%, #fda085 50%, #fff9f4 100%)",
+  "linear-gradient(135deg, #cfd9df 0%, #e2ebf0 33%, #f1f6f9 66%, #ffffff 100%)",
+  "linear-gradient(90deg, #ffe259 0%, #ffa751 100%)",
 ];
