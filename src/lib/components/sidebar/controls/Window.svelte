@@ -3,6 +3,7 @@
   import * as Select from "$lib/components/ui/select/index.js";
   import LabeledRow from "./LabeledRow.svelte";
   import { getActiveLabel } from "$lib/utils/select";
+  import Switch from "$lib/components/ui/switch/switch.svelte";
 
   // Shadow options
   const SHADOW_OPTIONS = [
@@ -91,6 +92,11 @@
           {/each}
         </Select.Content>
       </Select.Root>
+    </LabeledRow>
+
+    <!-- Reflection Control -->
+    <LabeledRow label="Reflection">
+      <Switch bind:checked={windowStore.reflection} />
     </LabeledRow>
   </div>
 </div>

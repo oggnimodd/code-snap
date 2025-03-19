@@ -87,7 +87,6 @@
     loadTheme(editorStore.theme);
   });
 
-  // Compute the correct font family string using the label from FONT_FAMILY_OPTIONS
   let computedFontFamily = $derived.by(() => {
     const option = FONT_FAMILY_OPTIONS.find(
       (opt) => opt.value === fontStore.family
@@ -97,7 +96,6 @@
       : `"IBM Plex Mono", monospace`;
   });
 
-  // Map the fontStore.weight to a numeric value so CSS receives a valid weight.
   let computedFontWeight = $derived.by(() => {
     const mapping: Record<string, string> = {
       regular: "400",
@@ -108,7 +106,6 @@
     return mapping[fontStore.weight] || "400";
   });
 
-  // Computed styles for shadow
   let computedBoxShadow = $derived.by(() => {
     switch (windowStore.shadow) {
       case "none":
@@ -124,7 +121,6 @@
     }
   });
 
-  // Computed styles for border
   let computedBorder = $derived.by(() => {
     switch (windowStore.border) {
       case "none":
@@ -146,12 +142,10 @@
     }
   }
 
-  // Get the correct language extension
   let currentLangExtension = $state<LanguageSupport | null>(null);
   async function loadLanguage(languageId: string) {
     const langDef = SUPPORTED_LANGUAGES.find((lang) => lang.id === languageId);
     if (langDef) {
-      // Cast the result to LanguageSupport
       currentLangExtension = (await langDef.plugin()) as LanguageSupport;
     }
   }
@@ -163,7 +157,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-  class="rounded-xl"
+  class="relative overflow-hidden rounded-xl"
   onclick={focusEditor}
   style="
     --editor-font-family: {computedFontFamily}; 
@@ -188,6 +182,11 @@
     extensions={baseExtensions}
     theme={currentTheme}
   />
+
+  {#if windowStore.reflection}
+    <!-- Reflection overlay -->
+    <div class="reflection"></div>
+  {/if}
 </div>
 
 <style>
@@ -223,10 +222,29 @@
       normal
     ) !important;
   }
-
   :global(.cm-gutter.cm-foldGutter) {
     visibility: hidden;
     pointer-events: none;
     user-select: none;
+  }
+
+  /* Reflection styles */
+  .reflection {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 50%; /* Adjust the height as desired */
+    transform: skewX(-18deg) translateX(-55%);
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 35%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    /* Inherit rounded corners on the bottom */
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    z-index: 100;
   }
 </style>

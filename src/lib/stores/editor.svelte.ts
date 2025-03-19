@@ -36,6 +36,8 @@ export const windowStore = $state({
   shadow: "small",
   // "none", "thin", "normal", "thick", etc.
   border: "none",
+  // glass reflection effect
+  reflection: true,
 });
 
 export const editorStore = $state({
