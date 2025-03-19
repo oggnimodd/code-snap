@@ -4,7 +4,8 @@
   import { Switch } from "$lib/components/ui/switch/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import LabeledRow from "./LabeledRow.svelte";
-  import { LANGUAGE_OPTIONS, THEME_OPTIONS } from "$lib/config";
+  import { THEME_OPTIONS } from "$lib/config";
+  import { SUPPORTED_LANGUAGES } from "$lib/config/language-support";
 
   // Local reactive copies
   let languageStr = $state(editorStore.language);
@@ -63,6 +64,13 @@
       lineNumberStart = editorStore.lineNumberStart;
     }
   });
+
+  const formattedLanguages = SUPPORTED_LANGUAGES.map((lang) => {
+    return {
+      label: lang.label,
+      value: lang.id,
+    };
+  });
 </script>
 
 <div class="flex flex-col gap-4">
@@ -73,16 +81,16 @@
       <Select.Root
         name="editor-language"
         bind:value={languageStr}
-        items={LANGUAGE_OPTIONS}
+        items={formattedLanguages}
         type="single"
       >
         <Select.Trigger>
-          {#each LANGUAGE_OPTIONS as option}
+          {#each formattedLanguages as option}
             {#if option.value === languageStr}{option.label}{/if}
           {/each}
         </Select.Trigger>
         <Select.Content>
-          {#each LANGUAGE_OPTIONS as option}
+          {#each formattedLanguages as option}
             <Select.Item value={option.value}>{option.label}</Select.Item>
           {/each}
         </Select.Content>

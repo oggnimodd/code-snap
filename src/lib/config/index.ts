@@ -1,36 +1,3 @@
-export const LANGUAGE_OPTIONS = [
-  { label: "Javascript", value: "javascript" },
-  { label: "Typescript", value: "typescript" },
-  { label: "Css", value: "css" },
-  { label: "Html", value: "html" },
-  { label: "C", value: "c" },
-  { label: "C#", value: "csharp" },
-  { label: "C++", value: "cpp" },
-  { label: "Dart", value: "dart" },
-  { label: "Dockerfile", value: "dockerfile" },
-  { label: "Go", value: "go" },
-  { label: "Java", value: "java" },
-  { label: "JSON", value: "json" },
-  { label: "Kotlin", value: "kotlin" },
-  { label: "Less", value: "less" },
-  { label: "Markdown", value: "markdown" },
-  { label: "Pascal", value: "pascal" },
-  { label: "PHP", value: "php" },
-  { label: "Plain Text", value: "plaintext" },
-  { label: "Protobuf", value: "protobuf" },
-  { label: "Python", value: "python" },
-  { label: "Ruby", value: "ruby" },
-  { label: "Rust", value: "rust" },
-  { label: "Scala", value: "scala" },
-  { label: "Scss", value: "scss" },
-  { label: "Shell", value: "shell" },
-  { label: "SQL", value: "sql" },
-  { label: "Swift", value: "swift" },
-  { label: "Visual Basic", value: "vb" },
-  { label: "XML", value: "xml" },
-  { label: "Yaml", value: "yaml" },
-];
-
 export const THEME_OPTIONS = [
   // Dark themes
   { label: "Abcdef", value: "abcdef" },
@@ -82,6 +49,7 @@ export const THEME_OPTIONS = [
   { label: "White Light", value: "whiteLight" },
   { label: "Xcode Light", value: "xcodeLight" },
 ];
+
 export const FONT_FAMILY_OPTIONS = [
   { label: "Jetbrains Mono", value: "jetbrains-mono" },
   { label: "Geist Mono", value: "geist-mono" },

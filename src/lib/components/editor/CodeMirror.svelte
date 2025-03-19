@@ -10,8 +10,8 @@
   import { Compartment } from "@codemirror/state";
   import type { Extension } from "@codemirror/state";
   import { FONT_FAMILY_OPTIONS } from "$lib/config";
-
-  // and available in this component
+  import { SUPPORTED_LANGUAGES } from "$lib/config/language-support";
+  import type { LanguageSupport } from "@codemirror/language";
 
   let value = $state("");
   let view: EditorView | null = $state(null);
@@ -145,8 +145,23 @@
       view.focus();
     }
   }
+
+  // Get the correct language extension
+  let currentLangExtension = $state<LanguageSupport | null>(null);
+  async function loadLanguage(languageId: string) {
+    const langDef = SUPPORTED_LANGUAGES.find((lang) => lang.id === languageId);
+    if (langDef) {
+      // Cast the result to LanguageSupport
+      currentLangExtension = (await langDef.plugin()) as LanguageSupport;
+    }
+  }
+  $effect(() => {
+    loadLanguage(editorStore.language);
+  });
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="rounded-xl"
   onclick={focusEditor}
@@ -169,7 +184,7 @@
       view = e.detail;
     }}
     bind:value
-    lang={javascript()}
+    lang={currentLangExtension}
     extensions={baseExtensions}
     theme={currentTheme}
   />
