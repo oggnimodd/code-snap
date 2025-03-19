@@ -5,7 +5,7 @@
 
 <div class="h-full w-full overflow-hidden">
   <div class="flex h-full w-full w-full overflow-auto">
-    <div class="m-auto my-auto w-fit w-full p-20">
+    <div class="m-auto my-auto w-fit p-20">
       <Frame>
         <CodeMirror />
       </Frame>

@@ -44,7 +44,8 @@
 <style>
   /* Darker checkered pattern */
   .bg-checkered {
-    background-image: linear-gradient(45deg, #121212 25%, transparent 25%),
+    background-image:
+      linear-gradient(45deg, #121212 25%, transparent 25%),
       linear-gradient(-45deg, #121212 25%, transparent 25%),
       linear-gradient(45deg, transparent 75%, #121212 75%),
       linear-gradient(-45deg, transparent 75%, #121212 75%);
