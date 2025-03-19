@@ -81,10 +81,3 @@ export const FRAME_RADIUS_OPTIONS = [
   { label: "16", value: "16" },
   { label: "24", value: "24" },
 ];
-
-export const ASPECT_RATIO_OPTIONS = [
-  { label: "Auto", value: "auto" },
-  { label: "16:9", value: "16:9" },
-  { label: "4:3", value: "4:3" },
-  { label: "1:1", value: "1:1" },
-];

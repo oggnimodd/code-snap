@@ -10,7 +10,6 @@ export interface FrameStore {
     type: BackgroundType;
     value: BackgroundValue;
   };
-  aspectRatio: "auto" | "16:9" | "4:3" | "1:1";
 }
 
 // This store will control the background frame

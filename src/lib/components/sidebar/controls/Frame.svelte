@@ -5,12 +5,7 @@
   import { Switch } from "$lib/components/ui/switch/index.js";
   import BackgroundControl from "./BackgroundControl.svelte";
   import LabeledRow from "./LabeledRow.svelte";
-  import {
-    ASPECT_RATIO_OPTIONS,
-    FRAME_PADDING_OPTIONS,
-    FRAME_RADIUS_OPTIONS,
-  } from "$lib/config";
-  import { getActiveLabel } from "$lib/utils/select";
+  import { FRAME_PADDING_OPTIONS, FRAME_RADIUS_OPTIONS } from "$lib/config";
 
   // Create reactive string states for padding and radius.
   let paddingStr = $state(frameStore.padding.toString());
@@ -111,28 +106,6 @@
             frameStore.background = value;
           }}
         />
-      </LabeledRow>
-
-      <!-- Aspect Ratio Control -->
-      <LabeledRow label="Aspect Ratio">
-        <Select.Root
-          name="aspect-ratio"
-          bind:value={frameStore.aspectRatio}
-          items={ASPECT_RATIO_OPTIONS}
-          type="single"
-        >
-          <Select.Trigger
-            >{getActiveLabel(
-              frameStore.aspectRatio,
-              ASPECT_RATIO_OPTIONS
-            )}</Select.Trigger
-          >
-          <Select.Content>
-            {#each ASPECT_RATIO_OPTIONS as option}
-              <Select.Item value={option.value}>{option.label}</Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
       </LabeledRow>
     {/if}
   </div>
