@@ -1,6 +1,5 @@
 <script lang="ts">
   import CodeMirror from "svelte-codemirror-editor";
-  import { javascript } from "@codemirror/lang-javascript";
   import {
     editorStore,
     fontStore,
@@ -12,8 +11,9 @@
   import { FONT_FAMILY_OPTIONS } from "$lib/config";
   import { SUPPORTED_LANGUAGES } from "$lib/config/language-support";
   import type { LanguageSupport } from "@codemirror/language";
+  import { DEFAULT_EDITOR_CONTENT } from "$lib/config/editor";
 
-  let value = $state("");
+  let value = $state(DEFAULT_EDITOR_CONTENT);
   let view: EditorView | null = $state(null);
   let currentTheme = $state<Extension | null>(null);
   const lineNumbersCompartment = new Compartment();
@@ -176,6 +176,7 @@
     class="w-auto"
     on:ready={(e) => {
       view = e.detail;
+      editorStore.isReady = true;
     }}
     bind:value
     lang={currentLangExtension}

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { frameStore } from "$lib/stores/editor.svelte";
+  import { frameStore, editorStore } from "$lib/stores/editor.svelte";
+  import { cn } from "$lib/utils";
   const { children } = $props();
   let exportableRef: HTMLElement | null = $state(null);
   let isResizing = $state(false);
@@ -44,7 +45,26 @@
   }
 </script>
 
-<div class="flex justify-center" style="width: 100%;">
+{#if !editorStore.isReady}
+  <!-- Loading Indicator Outside of the Main Exportable Container -->
+  <div class="flex h-full w-full items-center justify-center">
+    <div
+      class="flex animate-pulse flex-col items-center justify-center rounded-lg bg-card p-8 shadow-md"
+    >
+      <div class="mb-2 h-4 w-64 rounded bg-gray-300 dark:bg-gray-700"></div>
+      <div class="mb-2 h-4 w-48 rounded bg-gray-300 dark:bg-gray-700"></div>
+      <div class="mb-2 h-4 w-56 rounded bg-gray-300 dark:bg-gray-700"></div>
+      <div class="mt-4 font-mono text-sm text-foreground">
+        Loading Editor...
+      </div>
+    </div>
+  </div>
+{/if}
+
+<div
+  class={cn("flex justify-center", !editorStore.isReady && "hidden")}
+  style="width: 100%;"
+>
   <div
     class="relative inline-block"
     style="border-radius: {frameStore.radius}px;"

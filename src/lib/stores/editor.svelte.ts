@@ -20,13 +20,13 @@ export interface FrameStore {
 
 // This store will control the background frame
 export const frameStore: FrameStore = $state({
-  padding: 32,
+  padding: 64,
   radius: 0,
   visible: true,
   opacity: 1,
   background: {
-    type: "solid",
-    value: "#0000FF",
+    type: "gradient",
+    value: "linear-gradient(135deg, #9B5DE5 0%, #F15BB5 50%, #FEE440 100%)",
   },
   aspectRatio: "auto",
 });
@@ -42,6 +42,7 @@ export const editorStore = $state({
   theme: "aura",
   lineNumbers: true,
   lineNumberStart: 1,
+  isReady: false,
 });
 
 export const fontStore = $state({
