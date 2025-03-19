@@ -2,6 +2,7 @@
   import { windowStore } from "$lib/stores/editor.svelte";
   import * as Select from "$lib/components/ui/select/index.js";
   import LabeledRow from "./LabeledRow.svelte";
+  import { getActiveLabel } from "$lib/utils/select";
 
   // Shadow options
   const SHADOW_OPTIONS = [
@@ -62,7 +63,9 @@
         items={SHADOW_OPTIONS}
         type="single"
       >
-        <Select.Trigger>{shadowStr}</Select.Trigger>
+        <Select.Trigger
+          >{getActiveLabel(shadowStr, SHADOW_OPTIONS)}</Select.Trigger
+        >
         <Select.Content>
           {#each SHADOW_OPTIONS as option}
             <Select.Item value={option.value}>{option.label}</Select.Item>
@@ -79,7 +82,9 @@
         items={BORDER_OPTIONS}
         type="single"
       >
-        <Select.Trigger>{borderStr}</Select.Trigger>
+        <Select.Trigger>
+          {getActiveLabel(borderStr, BORDER_OPTIONS)}
+        </Select.Trigger>
         <Select.Content>
           {#each BORDER_OPTIONS as option}
             <Select.Item value={option.value}>{option.label}</Select.Item>

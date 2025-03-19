@@ -10,6 +10,7 @@
     FRAME_PADDING_OPTIONS,
     FRAME_RADIUS_OPTIONS,
   } from "$lib/config";
+  import { getActiveLabel } from "$lib/utils/select";
 
   // Create reactive string states for padding and radius.
   let paddingStr = $state(frameStore.padding.toString());
@@ -120,7 +121,12 @@
           items={ASPECT_RATIO_OPTIONS}
           type="single"
         >
-          <Select.Trigger>{frameStore.aspectRatio}</Select.Trigger>
+          <Select.Trigger
+            >{getActiveLabel(
+              frameStore.aspectRatio,
+              ASPECT_RATIO_OPTIONS
+            )}</Select.Trigger
+          >
           <Select.Content>
             {#each ASPECT_RATIO_OPTIONS as option}
               <Select.Item value={option.value}>{option.label}</Select.Item>
