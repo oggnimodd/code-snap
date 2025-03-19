@@ -1,27 +1,67 @@
-# Aqua Langua
+# Code Snap
+
+Code Snap is a lightweight tool for creating beautiful code snippets for sharing and presentations.
+
+## Features
+
+- Create customizable code snippets with various themes
+- Adjust font family, weight, and ligatures
+- Customize frame padding, radius, and background
+- Support for multiple programming languages
+- Window styling with shadow, border, and reflection options
+- Export snippets as images
 
 ## Tech Stack
 
-*   **Frontend:** SvelteKit (Svelte 5), Bits-UI, Tailwind CSS
-*   **AI Providers:** Gemini, Groq, Mistral
-*   **Database:** Turso
-*   **Runtime:** Bun
-
-## Styling
-
-Tailwind CSS is used for styling.
+- SvelteKit 2 with Svelte 5
+- TypeScript
+- Tailwind CSS
+- CodeMirror 6 for code editing
+- Bun as package manager
 
 ## Getting Started
 
-1.  Install dependencies:
+### Prerequisites
 
-    ```bash
-    bun install
-    ```
-2.  Run the development server:
+- Bun (recommended) or Node.js
 
-    ```bash
-    bun run dev
-    ```
+### Installation
 
-Open <http://localhost:5173> with your browser to see the result.
+Clone the repository and install dependencies:
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/code-snap.git
+cd code-snap
+
+# Install dependencies
+bun install
+```
+
+### Development
+
+Start the development server:
+
+```bash
+bun run dev
+```
+
+### Build
+
+Create a production build:
+
+```bash
+bun run build
+```
+
+### Preview
+
+Preview the production build locally:
+
+```bash
+bun run preview
+```
+
+## License
+
+[MIT](LICENSE)
