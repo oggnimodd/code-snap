@@ -10,7 +10,6 @@
     ColorPicker,
     GradientColorPicker,
   } from "$lib/components/ui/color-picker/index.js";
-  import { onMount } from "svelte";
   import { Input } from "$lib/components/ui/input/index.js";
   import {
     SOLID_COLOR_PRESETS,
@@ -25,7 +24,7 @@
 
   let { type, value, onChange }: BackgroundControlProps = $props();
 
-  let isFirstRender = true;
+  // Initialize state based on props
   let popoverOpen = $state(false);
   let solidColorValue = $state(type === "solid" ? value : "#000000");
   let gradientColorValue = $state(
@@ -34,90 +33,94 @@
       : "linear-gradient(-45deg, #4954de 0%, #49ddd8 100%)"
   );
   let imageValue = $state(type === "image" ? value : "");
-  let activeTab = $state<"gradient" | "color" | "image">("gradient");
 
-  const handleSolidColorChange = (color: string) => {
+  // Set active tab based on type
+  let activeTab = $state<"gradient" | "color" | "image">(
+    type === "solid" ? "color" : type === "image" ? "image" : "gradient"
+  );
+
+  // Watch for external prop changes
+  $effect.root(() => {
+    if (type === "solid") {
+      solidColorValue = value;
+    } else if (type === "gradient") {
+      gradientColorValue = value;
+    } else if (type === "image") {
+      imageValue = value;
+    }
+  });
+
+  // Handle solid color changes
+  function handleSolidColorChange(color: string) {
     solidColorValue = color;
-  };
+    if (activeTab === "color") {
+      onChange({ type: "solid", value: color });
+    }
+  }
 
-  const handleGradientColorChange = (color: string) => {
+  // Handle gradient color changes
+  function handleGradientColorChange(color: string) {
     gradientColorValue = color;
-  };
+    if (activeTab === "gradient") {
+      onChange({ type: "gradient", value: color });
+    }
+  }
 
-  const handleImageChange = (event: Event) => {
+  // Handle image upload
+  function handleImageChange(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files.length > 0) {
       const file = target.files[0];
       if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
         return;
       }
+
       const reader = new FileReader();
       reader.onload = () => {
-        imageValue = reader.result as string;
+        const result = reader.result as string;
+        imageValue = result;
+        if (activeTab === "image") {
+          onChange({ type: "image", value: result });
+        }
       };
       reader.readAsDataURL(file);
     }
-  };
+  }
 
-  const removeImage = () => {
+  // Handle image removal
+  function removeImage() {
     imageValue = "";
-    // Only update if the current value differs
-    if (type !== "gradient" || value !== gradientColorValue) {
-      onChange({ type: "gradient", value: gradientColorValue });
-    }
-  };
+    activeTab = "gradient";
+    onChange({ type: "gradient", value: gradientColorValue });
+  }
 
-  // Initialize state on first render
-  $effect(() => {
-    if (isFirstRender) {
-      if (type === "gradient") {
-        activeTab = "gradient";
-        gradientColorValue = value;
-      } else if (type === "solid") {
-        activeTab = "color";
-        solidColorValue = value;
-      } else if (type === "image") {
-        activeTab = "image";
-        imageValue = value;
-      }
-    }
-  });
+  // Handle tab changes
+  function handleTabChange(newTab: "gradient" | "color" | "image") {
+    activeTab = newTab;
 
-  // Update parent's value only if it differs
-  $effect(() => {
-    if (
-      activeTab === "gradient" &&
-      (type !== "gradient" || value !== gradientColorValue)
-    ) {
+    if (newTab === "gradient") {
       onChange({ type: "gradient", value: gradientColorValue });
-    } else if (
-      activeTab === "color" &&
-      (type !== "solid" || value !== solidColorValue)
-    ) {
+    } else if (newTab === "color") {
       onChange({ type: "solid", value: solidColorValue });
-    } else if (
-      activeTab === "image" &&
-      imageValue &&
-      (type !== "image" || value !== imageValue)
-    ) {
+    } else if (newTab === "image" && imageValue) {
       onChange({ type: "image", value: imageValue });
+    } else if (newTab === "image" && !imageValue) {
+      // Do nothing until an image is uploaded
     }
-  });
+  }
 
-  // When popover closes in image tab with no image, fallback to gradient if needed
-  $effect(() => {
-    if (
-      !popoverOpen &&
-      activeTab === "image" &&
-      !imageValue &&
-      (type !== "gradient" || value !== gradientColorValue)
-    ) {
+  // When popover closes with image tab but no image
+  function onPopoverClose() {
+    if (!popoverOpen && activeTab === "image" && !imageValue) {
+      activeTab = "gradient";
       onChange({ type: "gradient", value: gradientColorValue });
     }
-  });
+  }
 
-  onMount(() => {
-    isFirstRender = false;
+  $effect(() => {
+    if (!popoverOpen) {
+      onPopoverClose();
+    }
   });
 </script>
 
@@ -147,17 +150,24 @@
         <IconX size={18} />
       </Popover.Close>
     </div>
-    <Tabs.Root bind:value={activeTab} class="w-full">
+    <Tabs.Root value={activeTab} class="w-full">
       <Tabs.List class="grid w-full grid-cols-3 gap-2">
-        <Tabs.Trigger value="gradient">Gradient</Tabs.Trigger>
-        <Tabs.Trigger value="color">Color</Tabs.Trigger>
-        <Tabs.Trigger value="image">Image</Tabs.Trigger>
+        <Tabs.Trigger
+          value="gradient"
+          onclick={() => handleTabChange("gradient")}>Gradient</Tabs.Trigger
+        >
+        <Tabs.Trigger value="color" onclick={() => handleTabChange("color")}
+          >Color</Tabs.Trigger
+        >
+        <Tabs.Trigger value="image" onclick={() => handleTabChange("image")}
+          >Image</Tabs.Trigger
+        >
       </Tabs.List>
     </Tabs.Root>
     <div class="mt-4"></div>
     {#if activeTab === "gradient"}
       <GradientColorPicker
-        {value}
+        value={gradientColorValue}
         initialColor={gradientColorValue}
         onchange={handleGradientColorChange}
         showColorPreviewBox={false}
@@ -175,7 +185,7 @@
       </div>
     {:else if activeTab === "color"}
       <ColorPicker
-        {value}
+        value={solidColorValue}
         initialColor={solidColorValue}
         onchange={handleSolidColorChange}
         showColorPreviewBox={false}

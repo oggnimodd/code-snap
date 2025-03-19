@@ -41,6 +41,13 @@
 <div class="flex flex-col gap-4">
   <h2 class="font-semibold text-foreground">Frame Controls</h2>
   <div class="flex flex-col gap-4 px-2">
+    <button
+      onclick={() => {
+        frameStore.background.type = "solid";
+        frameStore.background.value = "#00ff00";
+      }}>test</button
+    >
+
     <!-- Padding Control -->
     <LabeledRow label="Padding">
       <Select.Root

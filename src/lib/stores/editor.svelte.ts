@@ -20,7 +20,7 @@ export interface FrameStore {
 
 // This store will control the background frame
 export const frameStore: FrameStore = $state({
-  padding: 16,
+  padding: 32,
   radius: 0,
   visible: true,
   opacity: 1,
@@ -62,38 +62,18 @@ export function randomize() {
   windowStore.shadow = getRandomItem(shadowOptions);
   windowStore.reflection = Math.random() < 0.5;
 
+  // Randomly choose between solid and gradient, but only use presets
   const bgType: BackgroundType = Math.random() < 0.5 ? "solid" : "gradient";
   let bgValue: BackgroundValue;
 
   if (bgType === "solid") {
-    if (SOLID_COLOR_PRESETS.length > 0 && Math.random() < 0.5) {
-      bgValue = getRandomItem(SOLID_COLOR_PRESETS);
-    } else {
-      bgValue =
-        "#" +
-        Math.floor(Math.random() * 16777215)
-          .toString(16)
-          .padStart(6, "0");
-    }
+    // Only use solid color presets
+    bgValue = getRandomItem(SOLID_COLOR_PRESETS);
   } else {
-    if (GRADIENT_COLOR_PRESETS.length > 0 && Math.random() < 0.5) {
-      bgValue = getRandomItem(GRADIENT_COLOR_PRESETS);
-    } else {
-      // Randomize the angle instead of fixed 45deg
-      const angle = Math.floor(Math.random() * 360);
-      const color1 =
-        "#" +
-        Math.floor(Math.random() * 16777215)
-          .toString(16)
-          .padStart(6, "0");
-      const color2 =
-        "#" +
-        Math.floor(Math.random() * 16777215)
-          .toString(16)
-          .padStart(6, "0");
-      bgValue = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
-    }
+    // Only use gradient color presets
+    bgValue = getRandomItem(GRADIENT_COLOR_PRESETS);
   }
+
   frameStore.background.type = bgType;
   frameStore.background.value = bgValue;
 }
