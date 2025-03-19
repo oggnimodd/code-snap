@@ -1,3 +1,9 @@
+import { FONT_FAMILY_OPTIONS, THEME_OPTIONS } from "$lib/config";
+import {
+  SOLID_COLOR_PRESETS,
+  GRADIENT_COLOR_PRESETS,
+} from "$lib/config/colors";
+
 export type BackgroundType = "solid" | "gradient" | "image";
 export type BackgroundValue = string;
 
@@ -14,38 +20,27 @@ export interface FrameStore {
 
 // This store will control the background frame
 export const frameStore: FrameStore = $state({
-  // Padding can be 0,16,32,64,128
   padding: 16,
-  // Radius can be 0,8,16,24
   radius: 0,
-  // Show frame or not
   visible: true,
-  // Control opacity of the frame, from 0 to 1
   opacity: 1,
-  // Background type, can be solid, gradient, or image
   background: {
     type: "solid",
     value: "#0000FF",
   },
-  // Aspect ratio of the frame, can be 16:9, 4:3, etc. Default to auto
   aspectRatio: "auto",
 });
 
 export const windowStore = $state({
-  // "none", "small", "medium", "large"
   shadow: "small",
-  // "none", "thin", "normal", "thick", etc.
   border: "none",
-  // glass reflection effect
   reflection: true,
 });
 
 export const editorStore = $state({
-  // syntax
   language: "typescript",
   theme: "aura",
   lineNumbers: true,
-  // Only applied when lineNumbers is true
   lineNumberStart: 1,
 });
 
@@ -54,3 +49,50 @@ export const fontStore = $state({
   weight: "regular",
   ligatures: true,
 });
+
+function getRandomItem<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export function randomize() {
+  fontStore.family = getRandomItem(FONT_FAMILY_OPTIONS).value;
+  editorStore.theme = getRandomItem(THEME_OPTIONS).value;
+
+  const shadowOptions = ["none", "small", "medium", "large"];
+  windowStore.shadow = getRandomItem(shadowOptions);
+  windowStore.reflection = Math.random() < 0.5;
+
+  const bgType: BackgroundType = Math.random() < 0.5 ? "solid" : "gradient";
+  let bgValue: BackgroundValue;
+
+  if (bgType === "solid") {
+    if (SOLID_COLOR_PRESETS.length > 0 && Math.random() < 0.5) {
+      bgValue = getRandomItem(SOLID_COLOR_PRESETS);
+    } else {
+      bgValue =
+        "#" +
+        Math.floor(Math.random() * 16777215)
+          .toString(16)
+          .padStart(6, "0");
+    }
+  } else {
+    if (GRADIENT_COLOR_PRESETS.length > 0 && Math.random() < 0.5) {
+      bgValue = getRandomItem(GRADIENT_COLOR_PRESETS);
+    } else {
+      // Randomize the angle instead of fixed 45deg
+      const angle = Math.floor(Math.random() * 360);
+      const color1 =
+        "#" +
+        Math.floor(Math.random() * 16777215)
+          .toString(16)
+          .padStart(6, "0");
+      const color2 =
+        "#" +
+        Math.floor(Math.random() * 16777215)
+          .toString(16)
+          .padStart(6, "0");
+      bgValue = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+    }
+  }
+  frameStore.background = { type: bgType, value: bgValue };
+}
