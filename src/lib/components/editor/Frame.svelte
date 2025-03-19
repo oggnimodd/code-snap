@@ -18,7 +18,6 @@
     // Enforce a minimum width of 50px
     if (newWidth < 50) return;
     exportableRef.style.minWidth = newWidth + "px";
-    currentWidth = newWidth; // Update the current width
   }
 
   function handleMouseDown(options: {
@@ -69,6 +68,7 @@
     <!-- Exportable wrapper with background and content -->
     <div
       bind:this={exportableRef}
+      bind:clientWidth={currentWidth}
       id="exportable-content"
       class="relative"
       style="border-radius: {frameStore.radius}px;"
