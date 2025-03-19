@@ -1,14 +1,14 @@
 <script lang="ts">
   import { frameStore } from "$lib/stores/editor.svelte";
   const { children } = $props();
-
   let exportableRef: HTMLElement | null = $state(null);
   let isResizing = $state(false);
   let startX: number = $state(0);
   let startWidth: number = $state(0);
+  let currentWidth: number = $state(0);
+
   // Tracks which edge handle was touched: "start" (left) or "end" (right)
   let activeEdge: "start" | "end" | null = $state(null);
-
   function handleMouseMove(event: MouseEvent) {
     if (!isResizing || !activeEdge || !exportableRef) return;
     const delta = event.clientX - startX;
@@ -18,6 +18,7 @@
     // Enforce a minimum width of 50px
     if (newWidth < 50) return;
     exportableRef.style.minWidth = newWidth + "px";
+    currentWidth = newWidth; // Update the current width
   }
 
   function handleMouseDown(options: {
@@ -31,7 +32,7 @@
     startWidth = exportableRef
       ? exportableRef.getBoundingClientRect().width
       : 0;
-
+    currentWidth = startWidth;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   }
@@ -60,13 +61,11 @@
       class="resize-handle right-handle"
       onmousedown={(event) => handleMouseDown({ event, edge: "end" })}
     ></button>
-
     <!-- Checkered background layer (not exportable) -->
     <div
       class="bg-checkered absolute inset-0"
       style="border-radius: {frameStore.radius}px;"
     ></div>
-
     <!-- Exportable wrapper with background and content -->
     <div
       bind:this={exportableRef}
@@ -91,6 +90,29 @@
         {@render children()}
       </div>
     </div>
+
+    <!-- Width counter - only visible when resizing -->
+    {#if isResizing}
+      <div
+        class="width-counter absolute -bottom-20 flex h-8 w-full items-center justify-between"
+      >
+        <div class="flex h-full w-[40%] items-center">
+          <div class="h-full w-[2px] bg-white/60"></div>
+          <div class="h-[2px] w-full bg-white/60"></div>
+        </div>
+
+        <div
+          class="w-[20%] min-w-[5rem] px-4 text-center text-sm font-semibold"
+        >
+          {Math.round(currentWidth)} px
+        </div>
+
+        <div class="flex h-full w-[40%] items-center">
+          <div class="h-[2px] w-full bg-white/60"></div>
+          <div class="h-full w-[2px] bg-white/60"></div>
+        </div>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -109,7 +131,6 @@
       -10px 0px;
     background-color: #1e1e1e;
   }
-
   .resize-handle {
     position: absolute;
     top: 50%;
@@ -131,5 +152,20 @@
   }
   .right-handle {
     right: -6px;
+  }
+  /* Slide in animation for the width counter container */
+  .width-counter {
+    animation: slideIn 0.4s ease-out forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 </style>
