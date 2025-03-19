@@ -176,7 +176,9 @@
     class="w-auto"
     on:ready={(e) => {
       view = e.detail;
-      editorStore.isReady = true;
+      setTimeout(() => {
+        editorStore.isReady = true;
+      }, 400);
     }}
     bind:value
     lang={currentLangExtension}
