@@ -94,5 +94,6 @@ export function randomize() {
       bgValue = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
     }
   }
-  frameStore.background = { type: bgType, value: bgValue };
+  frameStore.background.type = bgType;
+  frameStore.background.value = bgValue;
 }
