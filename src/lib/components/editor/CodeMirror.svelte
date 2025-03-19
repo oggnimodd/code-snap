@@ -114,11 +114,11 @@
       case "none":
         return "none";
       case "small":
-        return "0px 2px 4px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06)";
+        return "0px 3px 6px rgba(0, 0, 0, 0.18), 0px 1px 3px rgba(0, 0, 0, 0.12)";
       case "medium":
-        return "0px 4px 8px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.08)";
+        return "0px 6px 12px rgba(0, 0, 0, 0.24), 0px 3px 6px rgba(0, 0, 0, 0.16)";
       case "large":
-        return "0px 10px 15px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1)";
+        return "0px 12px 24px rgba(0, 0, 0, 0.30), 0px 6px 12px rgba(0, 0, 0, 0.18)";
       default:
         return "none";
     }
