@@ -29,6 +29,12 @@ export const SUPPORTED_LANGUAGES: readonly LanguageDefinition[] = [
       ),
   },
   {
+    id: "svelte",
+    label: "Svelte",
+    plugin: () =>
+      import("@replit/codemirror-lang-svelte").then(({ svelte }) => svelte()),
+  },
+  {
     id: "java",
     label: "Java",
     plugin: () => import("@codemirror/lang-java").then(({ java }) => java()),
