@@ -6,12 +6,12 @@
 
 <div class="h-full w-full overflow-hidden">
   <div class="flex h-full w-full w-full overflow-auto">
-    <div class="m-auto my-auto w-fit p-20">
+    <div class="m-auto my-auto w-fit px-20 pb-36 pt-24">
       <Frame>
         <CodeMirror />
       </Frame>
 
-      <div class="absolute bottom-4 left-1/2 z-[99999] -translate-x-1/2">
+      <div class="absolute bottom-2 left-1/2 z-[99999] -translate-x-1/2">
         <ActionBar />
       </div>
     </div>

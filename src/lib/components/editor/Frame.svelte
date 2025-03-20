@@ -114,7 +114,7 @@
     <!-- Width counter - only visible when resizing -->
     {#if isResizing}
       <div
-        class="width-counter absolute -bottom-20 flex h-8 w-full items-center justify-between"
+        class="width-counter absolute -bottom-16 flex h-8 w-full items-center justify-between"
       >
         <div class="flex h-full w-[40%] items-center">
           <div class="h-full w-[2px] bg-white/60"></div>

@@ -6,7 +6,7 @@
   import { randomize } from "$lib/stores/editor.svelte";
 </script>
 
-<div class="flex items-center justify-between gap-x-2 rounded-lg p-2">
+<div class="flex items-center justify-between gap-x-2 rounded-lg">
   <Button onclick={randomize} variant="secondary">
     <IconDice />
     Randomize
