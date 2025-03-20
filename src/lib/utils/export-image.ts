@@ -69,3 +69,40 @@ export const downloadDataUrlAsImage = (
   link.click();
   document.body.removeChild(link);
 };
+
+export const dataURLtoBlob = (dataurl: string) => {
+  const [header, base64] = dataurl.split(",");
+  const mimeMatch = header.match(/:(.*?);/);
+  if (!mimeMatch) throw new Error("Invalid data URL");
+  const mime = mimeMatch[1];
+  const binary = atob(base64);
+  const array = [];
+  for (let i = 0; i < binary.length; i++) {
+    array.push(binary.charCodeAt(i));
+  }
+  return new Blob([new Uint8Array(array)], { type: mime });
+};
+
+export const copyImageToClipboard = async (dataUrl: string) => {
+  try {
+    const blob = dataURLtoBlob(dataUrl);
+
+    // Check if Clipboard API is available
+    if (!navigator.clipboard || !window.ClipboardItem) {
+      throw new Error("Clipboard API not supported in this browser");
+    }
+
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        [blob.type]: blob,
+      }),
+    ]);
+
+    toast.success("Image copied to clipboard");
+    return true;
+  } catch (error) {
+    toast.error("Failed to copy image to clipboard");
+    console.error("Copy to clipboard failed:", error);
+    return false;
+  }
+};
