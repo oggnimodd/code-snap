@@ -43,13 +43,10 @@
       if (!dataUrl) {
         throw new Error("Empty data URL");
       }
-
       // Convert dataURL to Blob
       const blob = dataURLtoBlob(dataUrl);
-
       // Create a blob URL
       const blobUrl = URL.createObjectURL(blob);
-
       // Open the blob URL in a new tab
       window.open(blobUrl, "_blank");
     } catch (error) {
@@ -69,26 +66,29 @@
       <ExportConfig />
     </Popover.Content>
   </Popover.Root>
+
   <Button onclick={randomize} variant="secondary">
     <IconDice />
-    Randomize
+    <span class="hidden sm:inline">Randomize</span>
   </Button>
+
   <Button onclick={handleCopy} variant="secondary" disabled={isCopying}>
     {#if isCopying}
       <LoaderCircle class="animate-spin" />
-      <span>Copying...</span>
+      <span class="hidden sm:inline">Copying...</span>
     {:else}
       <IconCopy />
-      Copy to clipboard
+      <span class="hidden sm:inline">Copy to clipboard</span>
     {/if}
   </Button>
+
   <Button onclick={handleOpen} variant="secondary" disabled={isOpening}>
     {#if isOpening}
       <LoaderCircle class="animate-spin" />
-      <span>Opening...</span>
+      <span class="hidden sm:inline">Opening...</span>
     {:else}
       <IconExternalLink />
-      Open
+      <span class="hidden sm:inline">Open</span>
     {/if}
   </Button>
 </div>

@@ -13,7 +13,7 @@
   }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root {...restProps} bind:ref>
+<Sidebar.Root {...restProps} bind:ref class="z-[5000]">
   <Sidebar.Header></Sidebar.Header>
   <Sidebar.Content>
     <div class="flex flex-col gap-10 p-4">
