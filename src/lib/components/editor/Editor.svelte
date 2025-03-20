@@ -11,7 +11,7 @@
         <CodeMirror />
       </Frame>
 
-      <div class="absolute bottom-2 left-1/2 z-[1000] -translate-x-1/2">
+      <div class="absolute bottom-2 left-1/2 z-20 -translate-x-1/2">
         <ActionBar />
       </div>
     </div>
