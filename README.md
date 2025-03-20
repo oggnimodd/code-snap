@@ -2,6 +2,8 @@
 
 Code Snap is a lightweight tool for creating beautiful code snippets for sharing and presentations.
 
+![Demo Screenshot](screenshots/demo.png)
+
 ## Features
 
 - Create customizable code snippets with various themes
