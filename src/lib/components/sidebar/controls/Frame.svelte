@@ -39,7 +39,7 @@
 </script>
 
 <div class="flex flex-col gap-4">
-  <h2 class="font-semibold text-foreground">Frame Controls</h2>
+  <h2 class="font-semibold text-foreground">Frame</h2>
   <div class="flex flex-col gap-4 px-2">
     <!-- Padding Control -->
     <LabeledRow label="Padding">

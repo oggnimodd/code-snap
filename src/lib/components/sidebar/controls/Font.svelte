@@ -7,7 +7,7 @@
 </script>
 
 <div class="flex flex-col gap-4">
-  <h2 class="font-semibold text-foreground">Font Controls</h2>
+  <h2 class="font-semibold text-foreground">Font</h2>
   <div class="flex flex-col gap-4 px-2">
     <!-- Font Family Control -->
     <LabeledRow label="Font">

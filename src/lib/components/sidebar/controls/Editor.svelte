@@ -14,7 +14,7 @@
 </script>
 
 <div class="flex flex-col gap-4">
-  <h2 class="font-semibold text-foreground">Editor Controls</h2>
+  <h2 class="font-semibold text-foreground">Editor</h2>
   <div class="flex flex-col gap-4 px-2">
     <!-- Language Control -->
     <LabeledRow label="Language">
