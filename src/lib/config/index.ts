@@ -81,3 +81,16 @@ export const FRAME_RADIUS_OPTIONS = [
   { label: "16", value: "16" },
   { label: "24", value: "24" },
 ];
+
+export const EXPORT_TYPE_OPTIONS = [
+  { label: "SVG", value: "svg" },
+  { label: "PNG", value: "png" },
+  { label: "JPEG", value: "jpeg" },
+];
+
+export const EXPORT_SCALE_OPTIONS = [
+  { label: "1x", value: 1 },
+  { label: "2x", value: 2 },
+  { label: "3x", value: 3 },
+  { label: "4x", value: 4 },
+];

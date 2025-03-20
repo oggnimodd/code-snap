@@ -51,6 +51,16 @@ export const fontStore = $state({
   ligatures: true,
 });
 
+export interface ExportConfig {
+  type: "svg" | "png" | "jpeg";
+  scale: 1 | 2 | 3 | 4;
+}
+
+export const exportConfigStore = $state<ExportConfig>({
+  type: "png",
+  scale: 1,
+});
+
 function getRandomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
