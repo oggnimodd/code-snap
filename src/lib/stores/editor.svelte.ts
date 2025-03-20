@@ -3,6 +3,7 @@ import {
   SOLID_COLOR_PRESETS,
   GRADIENT_COLOR_PRESETS,
 } from "$lib/config/colors";
+import type { EditorView } from "@codemirror/view";
 
 export type BackgroundType = "solid" | "gradient" | "image";
 export type BackgroundValue = string;
@@ -37,12 +38,22 @@ export const windowStore = $state({
   reflection: true,
 });
 
-export const editorStore = $state({
+interface EditorStore {
+  language: string;
+  theme: string;
+  lineNumbers: boolean;
+  lineNumberStart: number;
+  isReady: boolean;
+  editorView: EditorView | null;
+}
+
+export const editorStore: EditorStore = $state({
   language: "typescript",
   theme: "aura",
   lineNumbers: true,
   lineNumberStart: 1,
   isReady: false,
+  editorView: null,
 });
 
 export const fontStore = $state({

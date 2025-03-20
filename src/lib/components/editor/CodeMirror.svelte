@@ -14,7 +14,6 @@
   import { DEFAULT_EDITOR_CONTENT } from "$lib/config/editor";
 
   let value = $state(DEFAULT_EDITOR_CONTENT);
-  let view: EditorView | null = $state(null);
   let currentTheme = $state<Extension | null>(null);
   const lineNumbersCompartment = new Compartment();
   const themeCache = $state(new Map<string, Extension>());
@@ -69,8 +68,8 @@
   ]);
 
   $effect(() => {
-    if (view) {
-      view.dispatch({
+    if (editorStore.editorView) {
+      editorStore.editorView.dispatch({
         effects: lineNumbersCompartment.reconfigure(
           editorStore.lineNumbers
             ? cmLineNumbers({
@@ -137,8 +136,8 @@
   });
 
   function focusEditor() {
-    if (view) {
-      view.focus();
+    if (editorStore.editorView) {
+      editorStore.editorView.focus();
     }
   }
 
@@ -175,7 +174,7 @@
   <CodeMirror
     class="w-auto"
     on:ready={(e) => {
-      view = e.detail;
+      editorStore.editorView = e.detail;
       setTimeout(() => {
         editorStore.isReady = true;
       }, 400);
