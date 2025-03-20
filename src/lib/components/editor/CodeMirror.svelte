@@ -79,7 +79,10 @@
 
       if (defaultSettings.background) {
         backgroundColor = defaultSettings.background;
-        backgroundColorWithOpacity = hexToRGBA(defaultSettings.background, 0.9);
+        backgroundColorWithOpacity = hexToRGBA(
+          defaultSettings.background,
+          0.93
+        );
       }
     });
   }
