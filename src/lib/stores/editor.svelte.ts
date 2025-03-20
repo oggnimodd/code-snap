@@ -99,4 +99,7 @@ export function randomize() {
 
   frameStore.background.type = bgType;
   frameStore.background.value = bgValue;
+
+  // Randomly choose transparency
+  windowStore.transparency = Math.random() < 0.5;
 }
