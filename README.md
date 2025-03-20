@@ -15,11 +15,13 @@ Code Snap is a lightweight tool for creating beautiful code snippets for sharing
 
 ## Tech Stack
 
-- SvelteKit 2 with Svelte 5
-- TypeScript
-- Tailwind CSS
-- CodeMirror 6 for code editing
-- Bun as package manager
+- [SvelteKit 2](https://kit.svelte.dev/) with [Svelte 5](https://svelte.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [CodeMirror 6](https://codemirror.net/6/) for code editing
+- [Bun](https://bun.sh/) as package manager
+- [svelte-shadcn](https://next.shadcn-svelte.com/)
+- [vite](https://vitejs.dev/) for development
 
 ## Getting Started
 
@@ -67,3 +69,7 @@ bun run preview
 ## License
 
 [MIT](LICENSE)
+
+## Credits
+
+This project is heavily inspired by https://github.com/riccardoperra/codeimage, which is written using SolidJS.
