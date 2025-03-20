@@ -23,7 +23,7 @@
   open={showExportDialog}
   onOpenChange={(open) => (showExportDialog = open)}
 >
-  <Dialog.Content class="z-[10000]">
+  <Dialog.Content class="z-[10000] max-w-[90%] sm:max-w-xl">
     <ExportConfig showDownloadButton />
   </Dialog.Content>
 </Dialog.Root>
