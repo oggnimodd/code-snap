@@ -117,3 +117,26 @@ export function rgbToHex(
   if (alpha !== undefined && alpha !== 255) out += toHex(alpha);
   return out;
 }
+
+export function hexToRGBA(hex: string, alpha: number) {
+  // Remove the hash if present
+  hex = hex.replace(/^#/, "");
+
+  let r: number, g: number, b: number;
+
+  // Handle shorthand (#RGB) or full form (#RRGGBB)
+  if (hex.length === 3) {
+    r = parseInt(hex[0] + hex[0], 16);
+    g = parseInt(hex[1] + hex[1], 16);
+    b = parseInt(hex[2] + hex[2], 16);
+  } else if (hex.length === 6) {
+    r = parseInt(hex.slice(0, 2), 16);
+    g = parseInt(hex.slice(2, 4), 16);
+    b = parseInt(hex.slice(4, 6), 16);
+  } else {
+    // Return a default fallback if the hex is not valid
+    return hex;
+  }
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}

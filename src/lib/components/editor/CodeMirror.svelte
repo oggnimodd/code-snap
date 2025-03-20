@@ -12,17 +12,26 @@
   import { SUPPORTED_LANGUAGES } from "$lib/config/language-support";
   import type { LanguageSupport } from "@codemirror/language";
   import { DEFAULT_EDITOR_CONTENT } from "$lib/config/editor";
+  import type { Settings } from "@uiw/codemirror-themes";
+  import { hexToRGBA } from "../ui/color-picker/utils";
 
   let value = $state(DEFAULT_EDITOR_CONTENT);
   let currentTheme = $state<Extension | null>(null);
   const lineNumbersCompartment = new Compartment();
   const themeCache = $state(new Map<string, Extension>());
+  const themeDefaultSettingsCache = $state(new Map<string, Settings>());
+  let backgroundColor = $state("");
+  let backgroundColorWithOpacity = $state("");
 
-  async function getThemeExtension(
-    themeName: string
-  ): Promise<Extension | null> {
-    if (themeCache.has(themeName)) {
-      return themeCache.get(themeName)!;
+  async function getThemeExtension(themeName: string): Promise<{
+    theme: Extension | null;
+    themeDefaultSettings: Settings;
+  } | null> {
+    if (themeCache.has(themeName) && themeDefaultSettingsCache.has(themeName)) {
+      return {
+        theme: themeCache.get(themeName)!,
+        themeDefaultSettings: themeDefaultSettingsCache.get(themeName)!,
+      };
     }
     try {
       const allThemes = await import("@uiw/codemirror-themes-all");
@@ -31,11 +40,23 @@
         Extension | undefined
       >;
       const theme = themeModule[themeName];
+
+      const themeNameCapitalized =
+        themeName.charAt(0).toUpperCase() + themeName.slice(1);
+
+      const themeDefaultSettings = themeModule[
+        `defaultSettings${themeNameCapitalized}`
+      ] as Settings;
+
       if (!theme) {
         throw new Error(`Theme "${themeName}" not found in themes package`);
       }
       themeCache.set(themeName, theme);
-      return theme;
+      themeDefaultSettingsCache.set(themeName, themeDefaultSettings);
+      return {
+        theme,
+        themeDefaultSettings: themeDefaultSettings,
+      };
     } catch (error) {
       if (themeName !== "dracula") {
         console.warn(`Theme "${themeName}" not found, falling back to dracula`);
@@ -52,7 +73,14 @@
 
   function loadTheme(themeName: string) {
     getThemeExtension(themeName).then((theme) => {
-      currentTheme = theme;
+      const { theme: themeExtension, themeDefaultSettings: defaultSettings } =
+        theme!;
+      currentTheme = themeExtension;
+
+      if (defaultSettings.background) {
+        backgroundColor = defaultSettings.background;
+        backgroundColorWithOpacity = hexToRGBA(defaultSettings.background, 0.9);
+      }
     });
   }
 
@@ -159,6 +187,9 @@
   class="relative overflow-hidden rounded-xl"
   onclick={focusEditor}
   style="
+    --editor-background-color: {windowStore.transparency
+    ? backgroundColorWithOpacity
+    : backgroundColor};
     --editor-font-family: {computedFontFamily}; 
     --editor-font-weight: {computedFontWeight}; 
     --editor-font-feature-settings: {fontStore.ligatures
@@ -207,6 +238,7 @@
     @apply select-none border-r-0 bg-transparent !important;
   }
   :global(.cm-editor) {
+    background: var(--editor-background-color);
     @apply rounded-xl px-4 py-3 text-lg;
   }
   :global(.cm-content) {

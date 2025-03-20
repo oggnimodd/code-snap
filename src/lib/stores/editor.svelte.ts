@@ -36,6 +36,7 @@ export const windowStore = $state({
   shadow: "small",
   border: "none",
   reflection: true,
+  transparency: false,
 });
 
 interface EditorStore {

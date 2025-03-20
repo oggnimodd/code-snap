@@ -66,5 +66,9 @@
     <LabeledRow label="Reflection">
       <Switch bind:checked={windowStore.reflection} />
     </LabeledRow>
+    <!-- Transparency Control -->
+    <LabeledRow label="Transparency">
+      <Switch bind:checked={windowStore.transparency} />
+    </LabeledRow>
   </div>
 </div>

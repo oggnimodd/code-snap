@@ -93,6 +93,7 @@
     "@mistralai/mistralai": "^1.5.0",
     "@tabler/icons-svelte": "^3.29.0",
     "@testing-library/svelte": "^5.2.7",
+    "@uiw/codemirror-themes": "^4.23.10",
     "@uiw/codemirror-themes-all": "^4.23.10",
     "clsx": "^2.1.1",
     "codemirror": "^6.0.1",
