@@ -10,6 +10,7 @@
 
   // Tracks which edge handle was touched: "start" (left) or "end" (right)
   let activeEdge: "start" | "end" | null = $state(null);
+
   function handleMouseMove(event: MouseEvent) {
     if (!isResizing || !activeEdge || !exportableRef) return;
     const delta = event.clientX - startX;
@@ -19,6 +20,7 @@
     // Enforce a minimum width of 50px
     if (newWidth < 50) return;
     exportableRef.style.minWidth = newWidth + "px";
+    currentWidth = newWidth;
   }
 
   function handleMouseDown(options: {
@@ -43,6 +45,13 @@
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
   }
+
+  // Reactive variable for the background style.
+  const backgroundStyle = $derived(
+    frameStore.background.type === "image"
+      ? `background-image: url(${frameStore.background.value}); background-size: cover; background-position: center;`
+      : `background: ${frameStore.background.value};`
+  );
 </script>
 
 {#if !editorStore.isReady}
@@ -93,14 +102,12 @@
       class="relative"
       style="border-radius: {frameStore.radius}px;"
     >
-      <!-- Actual background with opacity -->
       <div
         class="absolute inset-0"
         style="
-           background: {frameStore.background.value};
-           opacity: {frameStore.visible ? frameStore.opacity : 0};
-           border-radius: {frameStore.radius}px;
-         "
+        {backgroundStyle} 
+        opacity: {frameStore.visible ? frameStore.opacity : 0}; 
+        border-radius: {frameStore.radius}px;"
       ></div>
       <!-- Content with smooth transition for dimensions -->
       <div
